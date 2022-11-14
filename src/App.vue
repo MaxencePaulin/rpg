@@ -45,11 +45,21 @@
 
 <script>
 
+import {mapActions} from 'vuex'
+
 export default {
   name: 'App',
 
   data: () => ({
     //
   }),
+  methods: {
+    ...mapActions(['getAllTowns']),
+    ...mapActions(['getAllCharacs'])
+  },
+  mounted() {
+    this.getAllTowns();
+    this.getAllCharacs();
+  }
 };
 </script>
