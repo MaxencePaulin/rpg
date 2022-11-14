@@ -1,7 +1,9 @@
 <template>
   <v-container>
     <h1>Les personnages</h1>
-    {{ persos }}
+    <ul>
+      <li v-for="(perso, index) in persos" :key="index">{{ perso.nom }}</li>
+    </ul>
   </v-container>
 
 </template>
