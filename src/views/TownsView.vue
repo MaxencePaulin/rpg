@@ -20,14 +20,14 @@
         <h2>{{ villesFiltre[0].nom }}</h2>
         <table style="border: 1px solid black; border-collapse: collapse;">
           <tr>
-            <td style="border: 1px solid black;">rues : {{villesFiltre[0].rues.length}}</td>
-            <td style="border: 1px solid black;">boutiques</td>
+            <td class="pl-2 pr-2" style="border: 1px solid black; padding: 5px">rues : {{villesFiltre[0].rues.length}}</td>
+            <td class="pl-2 pr-2" style="border: 1px solid black;">boutiques</td>
           </tr>
           <tr v-for="(rue, index) in villesFiltre[0].rues" :key="index">
-            <td style="border: 1px solid black;">{{rue.nom}} : {{rue.boutiques.length}} boutiques</td>
+            <td class="pl-2 pr-2" style="border: 1px solid black;">{{rue.nom}} : {{rue.boutiques.length}} boutiques</td>
             <td style="border: 1px solid black;">
               <ul>
-                <li v-for="(boutique, index) in rue.boutiques" :key="index">{{boutique.nom}} : {{boutique.itemStock.length}} en stock, {{boutique.itemCommande.length}} sur commande</li>
+                <li class="pl-2 pr-2" v-for="(boutique, index) in rue.boutiques" :key="index">{{boutique.nom}} : {{boutique.itemStock.length}} en stock, {{boutique.itemCommande.length}} sur commande</li>
               </ul>
             </td>
           </tr>
