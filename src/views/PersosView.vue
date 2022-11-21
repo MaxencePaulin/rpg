@@ -44,8 +44,6 @@ import {mapState} from 'vuex'
 export default {
   name: 'PersosView',
   data: () => ({
-    filter: '',
-    filterActive: false,
     currentPerso: null,
     idSelected: -1
   }),
