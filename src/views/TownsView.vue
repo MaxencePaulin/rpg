@@ -18,7 +18,7 @@
     <div style="float:right;">
       <div v-if="villesFiltre.length === 1">
         <h2>{{ villesFiltre[0].nom }}</h2>
-        <table style="border: 1px solid black;">
+        <table style="border: 1px solid black; border-collapse: collapse;">
           <tr>
             <td style="border: 1px solid black;">rues : {{villesFiltre[0].rues.length}}</td>
             <td style="border: 1px solid black;">boutiques</td>
