@@ -23,13 +23,13 @@
             </td>
             <td style="border: 1px solid black;">
               <ul>
-                <li class="pl-2 pr-2" v-for="(emplacement, index) in currentPerso.emplacements" :key="index">{{emplacement.nom}} [{{emplacement.items.length}}] : <span v-for="(item, index) in emplacement.items" :key="index">{{item.nom}}<span v-if="index < (emplacement.items.length-1)">, </span></span></li>
+                <li class="pl-2 pr-2" v-for="(emplacement, index) in currentPerso.emplacements" :key="index">{{emplacement.nom}} <span v-if="emplacement.items.length > 0">[{{emplacement.items.length}}] </span>: <span v-for="(item, index) in emplacement.items" :key="index">{{item.nom}}<span v-if="index < (emplacement.items.length-1)">, </span></span></li>
               </ul>
             </td>
           </tr>
           <tr>
             <td class="pl-2 pr-2" style="border: 1px solid black;">or : {{currentPerso.or}}</td>
-            <td class="pl-2 pr-2" style="border: 1px solid black;">items achetés [{{currentPerso.itemsAchetes.length}}] : <span v-for="(item, index) in currentPerso.itemsAchetes" :key="index">{{item.nom}}<span v-if="index < (currentPerso.itemsAchetes.length-1)">, </span></span></td>
+            <td class="pl-2 pr-2" style="border: 1px solid black;">items achetés <span v-if="currentPerso.itemsAchetes.length > 0">[{{currentPerso.itemsAchetes.length}}] </span>: <span v-for="(item, index) in currentPerso.itemsAchetes" :key="index">{{item.nom}}<span v-if="index < (currentPerso.itemsAchetes.length-1)">, </span></span></td>
           </tr>
         </table>
       </div>
