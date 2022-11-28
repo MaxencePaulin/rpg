@@ -1,6 +1,13 @@
 <template>
   <div>
-
+    <ul>
+      <li v-for="(itemsAchetes, index) in data" :key="index" :value="index">
+        <input v-if="itemCheck === true" type="checkbox" :checked="checked[index]" :value="index" @change="$emit('checked-changed', index)">
+        {{itemsAchetes[index].nom}} {{itemsAchetes[index].type}}
+        <button v-if="itemButton.show === true" :value="index" @click="$emit('item-button-clicked', index)">{{itemButton.text}}</button>
+      </li>
+    </ul>
+    <button v-if="listButton.show === true" @click="$emit('list-button-clicked')">{{listButton.text}}</button>
   </div>
 </template>
 
@@ -18,7 +25,10 @@ export default {
   data: () => {
     return {
     }
+  },
+  methods: {
   }
+
 }
 </script>
 

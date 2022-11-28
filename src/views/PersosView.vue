@@ -2,7 +2,6 @@
   <v-container>
     <div style="float: left;">
       <h1>Les personnages</h1>
-      <CheckedList data="" fields="" itemCheck="" checked="" itemButton="" listButton=""></CheckedList>
       <select v-model="idSelected">
         <option value="-1">Choisissez un personnage</option>
         <option v-for="(perso, index) in persos" :key="index" :value="index">{{perso.nom}}</option>
@@ -33,7 +32,10 @@
           <tr>
             <td class="pl-2 pr-2" style="border: 1px solid black;">or : {{currentPerso.or}}</td>
             <td class="pl-2 pr-2" style="border: 1px solid black;">items achetés <span v-if="currentPerso.itemsAchetes.length > 0">
-              [{{currentPerso.itemsAchetes.length}}] </span>: <span v-for="(item, index) in currentPerso.itemsAchetes" :key="index">{{item.nom}}
+              [{{currentPerso.itemsAchetes.length}}] </span>:
+              <CheckedList @checked-changed="updateTable($event)" @item-button-clicked="alertItem($event)" @list-button-clicked="alertSelectedItems()" :data="currentPerso.itemsAchetes" :fields="currentPerso.emplacements" :itemCheck="itemCheck" :checked="checked" :itemButton="itemButton" :listButton="listButton"></CheckedList>
+
+              <span v-for="(item, index) in currentPerso.itemsAchetes" :key="index">{{item.nom}}
               <span v-if="index < (currentPerso.itemsAchetes.length-1)">, </span></span></td>
           </tr>
         </table>
@@ -43,14 +45,28 @@
 </template>
 
 <script>
-import CheckedList from "@/components/CheckedList.vue";
+import CheckedList from '@/components/CheckedList.vue'
 
 import {mapState} from 'vuex'
 export default {
   name: 'PersosView',
+  components: {
+    CheckedList
+  },
   data: () => ({
     currentPerso: null,
-    idSelected: -1
+    idSelected: -1,
+    fields: ['nom', 'attributs', 'emplacements', 'or', 'itemsAchetes'],
+    itemCheck: true,
+    checked: [false, false, false, false, false],
+    itemButton: {
+      show: true,
+      text: 'itemButton'
+    },
+    listButton: {
+      show: true,
+      text: 'listButton'
+    }
   }),
   computed: {
     ...mapState(['persos']),
@@ -65,6 +81,23 @@ export default {
       }else {
         this.currentPerso = null
       }
+    },
+    updateTable(idx) {
+      console.log('updateTable', idx)
+    },
+    alertItem(idx) {
+      alert('Item : ' + this.currentPerso.itemsAchetes[idx].nom + ' ' + this.currentPerso.itemsAchetes[idx].prix)
+      console.log('alertItem', idx)
+    },
+    alertSelectedItems() {
+      let selectedItems = []
+      for (let i = 0; i < this.checked.length; i++) {
+        if (this.checked[i]) {
+          selectedItems.push(this.currentPerso.itemsAchetes[i].nom)
+        }
+      }
+      alert('Selected items : ' + selectedItems.join(', '))
+      console.log('alertSelectedItems')
     }
   },
   watch: {
