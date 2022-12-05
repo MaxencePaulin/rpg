@@ -7,7 +7,7 @@
     >
       <NavBar :titles="[
           {text: 'Personnages', color: 'red'},
-          {text: 'Ville', color: 'yellow'}
+          {text: 'Ville', color: 'green'}
         ]" @menu-clicked='menuClicked'
       />
     </v-app-bar>
@@ -38,9 +38,13 @@ export default {
     menuClicked(idx) {
       console.log('menuClicked', idx)
       if (idx === 0) {
-        this.$router.push('/persos')
+        this.$router.push('/persos').catch(() => {
+          alert('Vous êtes déjà sur la page des personnages')
+        })
       }else if (idx === 1) {
-        this.$router.push('/towns')
+        this.$router.push('/towns').catch(() => {
+          alert('Vous êtes déjà sur la page des villes')
+        })
       }
     }
   },

@@ -26,9 +26,14 @@
           <tr v-for="(rue, index) in villesFiltre[0].rues" :key="index">
             <td class="pl-2 pr-2" style="border: 1px solid black;">{{rue.nom}} : {{rue.boutiques.length}} boutiques</td>
             <td style="border: 1px solid black;">
-              <ul>
-                <li class="pl-2 pr-2" v-for="(boutique, index) in rue.boutiques" :key="index">{{boutique.nom}} : {{boutique.itemStock.length}} en stock, {{boutique.itemCommande.length}} sur commande</li>
-              </ul>
+              <CheckedList
+                :data="rue.boutiques"
+                :fields="['nom']"
+                :itemCheck="false"
+                :checked="selectedItems"
+                :itemButton="{show: true, text: 'Sélectionner'}"
+                :listButton="{show: false, text: ''}"
+              />
             </td>
           </tr>
         </table>
@@ -40,17 +45,35 @@
 <script>
 
 import {mapState} from 'vuex'
+import CheckedList from "@/components/CheckedList";
+
 export default {
   name: 'TownsView',
+  components: {CheckedList},
   data: () => ({
     filter: '',
-    filterActive: false
+    filterActive: false,
   }),
   computed: {
     ...mapState(['villes']),
     villesFiltre() {
       return this.villes.filter(v => v.nom.includes(this.filter))
+    },
+    selectedItems() {
+      let selectedItems = []
+      this.villesFiltre.forEach(v => {
+        v.rues.forEach(r => {
+          r.boutiques.forEach(b => {
+            b.itemStock.forEach(() => {
+              selectedItems.push(false)
+            })
+          })
+        })
+      })
+      return selectedItems;
+
     }
+
   }
 
 }
