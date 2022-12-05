@@ -33,10 +33,21 @@
             <td class="pl-2 pr-2" style="border: 1px solid black;">or : {{currentPerso.or}}</td>
             <td class="pl-2 pr-2" style="border: 1px solid black;">items achetés <span v-if="currentPerso.itemsAchetes.length > 0">
               [{{currentPerso.itemsAchetes.length}}] </span>:
-              <CheckedList @checked-changed="updateTable($event)" @item-button-clicked="alertItem($event)" @list-button-clicked="alertSelectedItems()" :data="currentPerso.itemsAchetes" :fields="currentPerso.emplacements" :itemCheck="itemCheck" :checked="checked" :itemButton="itemButton" :listButton="listButton"></CheckedList>
+              <CheckedList
+                  @checked-changed="updateTable($event)"
+                  @item-button-clicked="alertItem($event)"
+                  @list-button-clicked="alertSelectedItems()"
+                  :data="currentPerso.itemsAchetes"
+                  :fields="['nom', 'type']"
+                  :itemCheck="true"
+                  :checked="selectedItems"
+                  :itemButton="{show: true, text: 'Voir'}"
+                  :listButton="{show: true, text: 'Voir éléments séléctionné'}">
+              </CheckedList>
 
-              <span v-for="(item, index) in currentPerso.itemsAchetes" :key="index">{{item.nom}}
-              <span v-if="index < (currentPerso.itemsAchetes.length-1)">, </span></span></td>
+<!--              <span v-for="(item, index) in currentPerso.itemsAchetes" :key="index">{{item.nom}}-->
+<!--              <span v-if="index < (currentPerso.itemsAchetes.length-1)">, </span></span>-->
+            </td>
           </tr>
         </table>
       </div>
@@ -55,23 +66,19 @@ export default {
   },
   data: () => ({
     currentPerso: null,
-    idSelected: -1,
-    fields: ['nom', 'attributs', 'emplacements', 'or', 'itemsAchetes'],
-    itemCheck: true,
-    checked: [false, false, false, false, false],
-    itemButton: {
-      show: true,
-      text: 'itemButton'
-    },
-    listButton: {
-      show: true,
-      text: 'listButton'
-    }
+    idSelected: -1
   }),
   computed: {
     ...mapState(['persos']),
     nbPersos() {
       return this.persos.length
+    },
+    selectedItems() {
+      let selectedItems = []
+      for (let i = 0; i < this.currentPerso.itemsAchetes.length; i++) {
+        selectedItems.push(false)
+      }
+      return selectedItems
     }
   },
   methods: {
@@ -83,20 +90,25 @@ export default {
       }
     },
     updateTable(idx) {
-      console.log('updateTable', idx)
+      this.selectedItems[idx] = !this.selectedItems[idx]
+      console.log(this.selectedItems[idx])
     },
     alertItem(idx) {
-      alert('Item : ' + this.currentPerso.itemsAchetes[idx].nom + ' ' + this.currentPerso.itemsAchetes[idx].prix)
+      alert('nom: ' + this.currentPerso.itemsAchetes[idx].nom + ', prix: ' + this.currentPerso.itemsAchetes[idx].prix)
       console.log('alertItem', idx)
     },
     alertSelectedItems() {
-      let selectedItems = []
-      for (let i = 0; i < this.checked.length; i++) {
-        if (this.checked[i]) {
-          selectedItems.push(this.currentPerso.itemsAchetes[i].nom)
+      let res = [];
+      for (let i = 0; i < this.selectedItems.length; i++) {
+        if (this.selectedItems[i]) {
+          res.push(this.currentPerso.itemsAchetes[i].nom)
         }
       }
-      alert('Selected items : ' + selectedItems.join(', '))
+      if (res.length <= 0) {
+        alert('Aucun élément sélectionné');
+      }else {
+        alert('Selected items : ' + res.join(', '))
+      }
       console.log('alertSelectedItems')
     }
   },

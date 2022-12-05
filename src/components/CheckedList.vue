@@ -1,13 +1,15 @@
 <template>
   <div>
     <ul>
-      <li v-for="(itemsAchetes, index) in data" :key="index" :value="index">
+      <li v-for="(item, index) in data" :key="index" :value="item">
         <input v-if="itemCheck === true" type="checkbox" :checked="checked[index]" :value="index" @change="$emit('checked-changed', index)">
-        {{itemsAchetes[index].nom}} {{itemsAchetes[index].type}}
-        <button v-if="itemButton.show === true" :value="index" @click="$emit('item-button-clicked', index)">{{itemButton.text}}</button>
+        <span v-for="(field, index2) in fields" :key="index2">
+            {{field}} : {{item[field]}}<span v-if="fields[index2+1]">,</span>
+        </span>
+        <v-btn x-small class="grey" v-if="itemButton.show === true" :value="index" @click="$emit('item-button-clicked', index)">{{itemButton.text}}</v-btn>
       </li>
     </ul>
-    <button v-if="listButton.show === true" @click="$emit('list-button-clicked')">{{listButton.text}}</button>
+    <v-btn x-small class="grey" v-if="listButton.show === true" @click="$emit('list-button-clicked')">{{listButton.text}}</v-btn>
   </div>
 </template>
 
