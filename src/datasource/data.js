@@ -248,7 +248,12 @@ var towns = [
 var characs = [
   new Character("Conan",1), new Character("Xena",2)
 ];
-// assign an item to conan
-characs[0].slots[2].items.push(items[0]);
+// assign items to conan
+characs[0].slots[0].items.push(items[0]);
+characs[0].slots[1].items.push(items[3]);
+characs[0].slots[2].items.push(items[12]);
+characs[0].slots[2].items.push(items[16]);
+characs[0].boughtItems.push(items[26]);
+characs[0].boughtItems.push(items[33]);
 
 export { items, towns, characs}

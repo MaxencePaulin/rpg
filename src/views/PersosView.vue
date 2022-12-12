@@ -1,126 +1,141 @@
 <template>
   <v-container>
-    <div style="float: left;">
-      <h1>Les personnages</h1>
-      <select v-model="idSelected">
-        <option value="-1">Choisissez un personnage</option>
-        <option v-for="(perso, index) in persos" :key="index" :value="index">{{perso.nom}}</option>
-      </select>
-    </div>
-    <div style="float: right;">
-      <div v-if="currentPerso">
-        <h2>{{ currentPerso.nom }}</h2>
-        <table style="border: 1px solid black; border-collapse: collapse;">
+    <div style="display: flex">
+      <!-- partie gauche -->
+      <div style="text-align: left; width: 30%">
+        <h1>Les personnages</h1>
+        <select v-model="selected" class="persoselect">
+          <option disabled value="">Sélectionner un personnage</option>
+          <option v-for="(perso, index) in persos" :key="index" :value="perso">{{perso.nom}}</option>
+        </select>
+      </div>
+      <!-- partie droite -->
+      <div v-if="selected" style="text-align: left; width: 80%">
+        <h1>{{selected.nom}}</h1>
+        <table>
           <tr>
-            <td class="pl-2 pr-2" style="border: 1px solid black;">Attributs</td>
-            <td class="pl-2 pr-2" style="border: 1px solid black;">Emplacements</td>
+            <th>Attributs</th>
+            <th>Emplacements</th>
           </tr>
           <tr>
-            <td style="border: 1px solid black;">
+            <td>
               <ul>
-                <li class="pl-2 pr-2" v-for="(valeur, attribut) in currentPerso.attributs" :key="attribut">{{attribut}} : {{valeur}}</li>
+                <li>niveau : {{ selected.niveau}}</li>
+                <li>vie : {{ selected.attributs.vie}}</li>
+                <li>vitalité : {{ selected.attributs.vitalite}}</li>
+                <li>force : {{ selected.attributs.force}}</li>
+                <li>armure : {{ selected.attributs.protection}}</li>
               </ul>
             </td>
-            <td style="border: 1px solid black;">
+            <td>
               <ul>
-                <li class="pl-2 pr-2" v-for="(emplacement, index) in currentPerso.emplacements" :key="index">{{emplacement.nom}} <span v-if="emplacement.items.length > 0">
-                  [{{emplacement.items.length}}] </span>: <span v-for="(item, index) in emplacement.items" :key="index">{{item.nom}}
-                  <span v-if="index < (emplacement.items.length-1)">, </span></span></li>
+                <li v-for="(slot, index) in slots" :key="index">
+                  {{ slot.label }} <span v-if="slot.items.length >0">[{{slot.items.length}}]</span> :
+                  <span v-for="(item, index) in slot.items" :key="index">{{item.nom}}, </span>
+                </li>
               </ul>
             </td>
           </tr>
           <tr>
-            <td class="pl-2 pr-2" style="border: 1px solid black;">or : {{currentPerso.or}}</td>
-            <td class="pl-2 pr-2" style="border: 1px solid black;">items achetés <span v-if="currentPerso.itemsAchetes.length > 0">
-              [{{currentPerso.itemsAchetes.length}}] </span>:
+            <td> or : {{selected.or}}</td>
+            <td>
               <CheckedList
-                  @checked-changed="updateTable($event)"
-                  @item-button-clicked="alertItem($event)"
-                  @list-button-clicked="alertSelectedItems()"
-                  :data="currentPerso.itemsAchetes"
-                  :fields="['nom', 'type']"
-                  :itemCheck="true"
-                  :checked="selectedItems"
-                  :itemButton="{show: true, text: 'Voir'}"
-                  :listButton="{show: true, text: 'Voir éléments séléctionné'}">
+                  :data="selected.itemsAchetes"
+                  :fields="['nom','type']"
+                  :checked="checkedBoughtItems"
+                  item-check
+                  :item-button="{show: true, text: 'price'}"
+                  :list-button="{show: true, text: 'Infos'}"
+                  @checked-changed="toggleItem"
+                  @item-button-clicked="showItemPrice"
+                  @list-button-clicked="showItemsInfo"
+              >
               </CheckedList>
-
-<!--              <span v-for="(item, index) in currentPerso.itemsAchetes" :key="index">{{item.nom}}-->
-<!--              <span v-if="index < (currentPerso.itemsAchetes.length-1)">, </span></span>-->
             </td>
           </tr>
         </table>
       </div>
     </div>
   </v-container>
+
 </template>
 
 <script>
-import CheckedList from '@/components/CheckedList.vue'
 
 import {mapState} from 'vuex'
+import CheckedList from "@/components/CheckedList";
+
 export default {
   name: 'PersosView',
-  components: {
-    CheckedList
-  },
+  components: {CheckedList},
   data: () => ({
-    currentPerso: null,
-    idSelected: -1
+    selected: null,
+    idSelectedBoughtItems: [], // ce tableau ne contient que les ids des items achetés sélectionnés.
   }),
   computed: {
     ...mapState(['persos']),
-    nbPersos() {
-      return this.persos.length
-    },
-    selectedItems() {
-      let selectedItems = []
-      for (let i = 0; i < this.currentPerso.itemsAchetes.length; i++) {
-        selectedItems.push(false)
+    checkedBoughtItems() {
+      if (this.selected === null) return []
+      // construit un tableau contenant autant de cases qu'il y a d'items achetés
+      // chaque case contient true/false en fonction du fait que l'item est sélectionné ou non
+      let tab = []
+      for(let i=0;i<this.selected.itemsAchetes.length;i++) {
+        if (this.idSelectedBoughtItems.includes(i)) tab.push(true)
+        else tab.push(false)
       }
-      return selectedItems
+      return tab
+    },
+    // récupère la liste des emplacements du personnage courant afin de
+    // les classer dans l'ordre qu'il convient pour l'affichage, avec le nom en français.
+    slots() {
+      if (this.selected) {
+        let tab = [];
+        let slot = this.selected.emplacements.find(s => s.nom === 'head')
+        slot.label = 'tête'
+        tab.push(slot)
+        slot = this.selected.emplacements.find(s => s.nom === 'body')
+        slot.label = 'corps'
+        tab.push(slot)
+        slot = this.selected.emplacements.find(s => s.nom === 'hands')
+        slot.label = 'mains'
+        tab.push(slot)
+        slot = this.selected.emplacements.find(s => s.nom === 'belt')
+        slot.label = 'ceinture'
+        tab.push(slot)
+        slot = this.selected.emplacements.find(s => s.nom === 'bag')
+        slot.label = 'sac à dos'
+        tab.push(slot)
+        return tab
+      }
+      return []
     }
   },
   methods: {
-    setCurrentPerso(idx) {
-      if ((idx >= 0) && (idx < this.nbPersos)) {
-        this.currentPerso = this.persos[idx]
-      }else {
-        this.currentPerso = null
-      }
+    showItemPrice(index) {
+      alert(this.selected.itemsAchetes[index].nom+' : '+ this.selected.itemsAchetes[index].prix)
     },
-    updateTable(idx) {
-      this.selectedItems[idx] = !this.selectedItems[idx]
-      console.log(this.selectedItems[idx])
+    showItemsInfo() {
+      let items = ""
+      this.idSelectedBoughtItems.forEach(e => items += ' '+this.selected.itemsAchetes[e].nom)
+      alert(items)
     },
-    alertItem(idx) {
-      alert('nom: ' + this.currentPerso.itemsAchetes[idx].nom + ', prix: ' + this.currentPerso.itemsAchetes[idx].prix)
-      console.log('alertItem', idx)
-    },
-    alertSelectedItems() {
-      let res = [];
-      for (let i = 0; i < this.selectedItems.length; i++) {
-        if (this.selectedItems[i]) {
-          res.push(this.currentPerso.itemsAchetes[i].nom)
-        }
+    toggleItem(index) {
+      let id = this.idSelectedBoughtItems.indexOf(index)
+      if (id === -1) {
+        // ajoute index
+        this.idSelectedBoughtItems.push(index)
       }
-      if (res.length <= 0) {
-        alert('Aucun élément sélectionné');
-      }else {
-        alert('Selected items : ' + res.join(', '))
+      else {
+        // enleve index
+        this.idSelectedBoughtItems.splice(id,1)
       }
-      console.log('alertSelectedItems')
     }
   },
-  watch: {
-    idSelected(newVal) {
-      console.log("nouvelle sélection : " + newVal);
-      this.setCurrentPerso(newVal);
-    }
-  },
-  mounted() {
-    this.currentPerso = null
-    this.idSelected = -1
-  }
 }
 </script>
+
+<style>
+.persoselect {
+  background-color: lightgray;
+}
+</style>

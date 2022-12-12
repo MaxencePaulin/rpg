@@ -1,80 +1,94 @@
 <template>
   <v-container>
-    <div style="float:left;">
-      <h1>Les villes</h1>
-      <label for="filteractive">filtrage possible : </label><input type="checkbox" v-model="filterActive" id="filteractive">
-      <div v-if="filterActive">
-        <label for="filtertown">filtre : </label><input v-model="filter" id="filtertown">
+    <div style="display: flex">
+      <!-- partie gauche -->
+      <div style="text-align: left; width: 30%">
+        <h1>Les villes</h1>
+        <label for="filteractive">filtrage possible : </label><input type="checkbox" v-model="filterActive" id="filteractive">
+        <div v-if="filterActive">
+          <label for="filtertown">filtre : </label><input class="townselect" :value="filter" @input="townSelected($event.target.value)" id="filtertown">
+        </div>
         <ul>
-          <li v-for="(ville, index) in villesFiltre" :key="index">{{ ville.nom }}</li>
+          <li v-for="(ville, index) in villesFiltre" :key="index">{{ville.nom}}</li>
         </ul>
       </div>
-      <div v-else>
-        <ul>
-          <li v-for="(ville, index) in villes" :key="index">{{ ville.nom }}</li>
-        </ul>
-      </div>
-    </div>
-    <div style="float:right;">
-      <div v-if="villesFiltre.length === 1">
-        <h2>{{ villesFiltre[0].nom }}</h2>
-        <table style="border: 1px solid black; border-collapse: collapse;">
+      <!-- partie droite -->
+      <div v-if="currentTown" style="text-align: left; width: 80%">
+        <h1>{{currentTown.nom}}</h1>
+        <table>
           <tr>
-            <td class="pl-2 pr-2" style="border: 1px solid black; padding: 5px">rues : {{villesFiltre[0].rues.length}}</td>
-            <td class="pl-2 pr-2" style="border: 1px solid black;">boutiques</td>
+          <th>rues: {{currentTown.rues.length}}</th>
+          <th>boutiques</th>
           </tr>
-          <tr v-for="(rue, index) in villesFiltre[0].rues" :key="index">
-            <td class="pl-2 pr-2" style="border: 1px solid black;">{{rue.nom}} : {{rue.boutiques.length}} boutiques</td>
-            <td style="border: 1px solid black;">
+          <tr v-for="(street, index) in currentTown.rues" :key="index">
+            <td>
+              {{street.nom}} : {{ street.boutiques.length }} boutiques
+            </td>
+            <td>
               <CheckedList
-                :data="rue.boutiques"
-                :fields="['nom']"
-                :itemCheck="false"
-                :checked="selectedItems"
-                :itemButton="{show: true, text: 'Sélectionner'}"
-                :listButton="{show: false, text: ''}"
-              />
+                  :data="street.boutiques"
+                  :fields="['nom']"
+                  :item-button="{show: true, text: 'select'}"
+                  @item-button-clicked="shopSelected(index, $event)"
+              >
+              </CheckedList>
             </td>
           </tr>
         </table>
+        <ShopDetails :shop="currentShop"></ShopDetails>
       </div>
     </div>
   </v-container>
 </template>
 
 <script>
-
-import {mapState} from 'vuex'
 import CheckedList from "@/components/CheckedList";
-
+import ShopDetails from "@/components/ShopDetails";
+import {mapState} from 'vuex'
 export default {
   name: 'TownsView',
-  components: {CheckedList},
+  components: {CheckedList, ShopDetails},
   data: () => ({
     filter: '',
     filterActive: false,
+    currentShop: null,
   }),
   computed: {
     ...mapState(['villes']),
     villesFiltre() {
-      return this.villes.filter(v => v.nom.includes(this.filter))
+      if (this.filterActive) {
+        return this.villes.filter(v => v.nom.includes(this.filter))
+      }
+      else {
+        return this.villes
+      }
     },
-    selectedItems() {
-      let selectedItems = []
-      this.villesFiltre.forEach(v => {
-        v.rues.forEach(r => {
-          r.boutiques.forEach(b => {
-            b.itemStock.forEach(() => {
-              selectedItems.push(false)
-            })
-          })
-        })
-      })
-      return selectedItems;
-
+    currentTown() {
+      if (this.villesFiltre.length === 1) {
+        return this.villesFiltre[0]
+      }
+      else {
+        return null
+      }
     }
-
-  }
-
+  },
+  methods: {
+    townSelected(evt) {
+      this.filter = evt
+      this.currentShop = null // pour enlever la boutique courante affichée si on change de ville
+    },
+    shopSelected(streetIndex, shopIndex) {
+      this.currentShop = this.currentTown.rues[streetIndex].boutiques[shopIndex]
+    }
+  },
 }
 </script>
+
+<style>
+table, th, td {
+  border: 1px solid;
+}
+ .townselect {
+   background-color: lightgray;
+ }
+</style>

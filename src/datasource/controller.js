@@ -1,5 +1,4 @@
-import { towns } from './data';
-import { characs } from './data';
+import { towns, characs } from './data'
 
 // controllers: mime the API behavior
 

@@ -5,11 +5,7 @@
       color="primary"
       dark
     >
-      <NavBar :titles="[
-          {text: 'Personnages', color: 'red'},
-          {text: 'Ville', color: 'green'}
-        ]" @menu-clicked='menuClicked'
-      />
+      <NavBar :titles="titles" @menu-clicked="goTo"></NavBar>
     </v-app-bar>
 
     <v-main>
@@ -21,36 +17,33 @@
 <script>
 
 import {mapActions} from 'vuex'
-import NavBar from '@/components/NavBar.vue'
+import NavBar from "@/components/NavBar";
 
 export default {
   name: 'App',
-
+  components: {NavBar},
   data: () => ({
-    //
+    titles: [ {text:'Personnages', color: 'blue'},
+      {text:'Villes', color: 'red'},
+    ],
+    currentIndex: -1
   }),
-  components: {
-    NavBar
-  },
   methods: {
-    ...mapActions(['getAllTowns']),
-    ...mapActions(['getAllCharacs']),
-    menuClicked(idx) {
-      console.log('menuClicked', idx)
-      if (idx === 0) {
-        this.$router.push('/persos').catch(() => {
-          alert('Vous êtes déjà sur la page des personnages')
-        })
-      }else if (idx === 1) {
-        this.$router.push('/towns').catch(() => {
-          alert('Vous êtes déjà sur la page des villes')
-        })
+    ...mapActions(['getAllTowns', 'getAllCharacs']),
+    goTo(index) {
+      if (index !== this.currentIndex) {
+        this.currentIndex = index
+        if (index === 0) {
+          this.$router.push('persos')
+        } else if (index === 1) {
+          this.$router.push('towns')
+        }
       }
     }
   },
   mounted() {
-    this.getAllTowns();
-    this.getAllCharacs();
+    this.getAllTowns()
+    this.getAllCharacs()
   }
 };
 </script>
