@@ -39,6 +39,8 @@
 
 <script>
 import CheckedList from "@/components/CheckedList";
+import {mapGetters, mapMutations} from 'vuex'
+
 export default {
   name: "ShopDetails",
   components: {CheckedList},
@@ -80,8 +82,14 @@ export default {
         this.idSelectedItemsStock.splice(id,1)
       }
     },
+    ...mapGetters(['getOrCurrentPerso']),
+    ...mapMutations(['sell']),
     buyOneItem(index) {
       console.log('achat de '+this.shop.itemStock[index].nom)
+        if (this.getOrCurrentPerso() >= this.shop.itemStock[index].prix) {
+            return this.sell(this.shop.itemStock[index])
+        }
+        alert('Pas assez d\'or ou pas de personnage sélectionné');
     },
     buySelectedItems() {
       console.log('achat des items d\'indice '+this.idSelectedItemsStock)

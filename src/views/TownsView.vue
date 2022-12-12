@@ -44,7 +44,7 @@
 <script>
 import CheckedList from "@/components/CheckedList";
 import ShopDetails from "@/components/ShopDetails";
-import {mapState} from 'vuex'
+import {mapState, mapMutations} from 'vuex'
 export default {
   name: 'TownsView',
   components: {CheckedList, ShopDetails},
@@ -77,8 +77,10 @@ export default {
       this.filter = evt
       this.currentShop = null // pour enlever la boutique courante affichée si on change de ville
     },
+    ...mapMutations(['setCurrentShop']),
     shopSelected(streetIndex, shopIndex) {
       this.currentShop = this.currentTown.rues[streetIndex].boutiques[shopIndex]
+      this.setCurrentShop(this.currentShop);
     }
   },
 }

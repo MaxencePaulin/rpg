@@ -10,8 +10,18 @@ export default new Vuex.Store({
   // state = les données centralisées
   state: () => ({
     villes: [],
-    persos: []
+    persos: [],
+    currentPerso: null,
+    currentShop: null
   }),
+  getters: {
+    getOrCurrentPerso (state) {
+      if (!state.currentPerso) {
+        return 0;
+      }
+      return state.currentPerso.or;
+    }
+  },
   // mutations = fonctions synchrones pour mettre à jour le state (!!! interdit de modifier directement le state)
   mutations: {
     updateVilles(state, villes) {
@@ -19,6 +29,24 @@ export default new Vuex.Store({
     },
     updatePersos(state, persos) {
       state.persos = persos
+    },
+    setCurrentPerso(state, perso) {
+      state.currentPerso = perso
+      console.log('currentPerso : ', state.currentPerso.nom)
+    },
+    sell (state, item) {
+      if (!state.currentPerso || !state.currentShop) {
+        return null;
+      }
+      if (!state.currentPerso.itemsAchetes) {
+        state.currentPerso.itemsAchetes = [];
+      }
+      state.currentPerso.or -= item.prix;
+      state.currentPerso.itemsAchetes.push(item);
+      state.currentShop.itemStock = state.currentShop.itemStock.filter(i => i._id !== item._id);
+    },
+    setCurrentShop(state, shop) {
+      state.currentShop = shop;
     }
   },
   // actions = fonctions asynchrone pour mettre à jour le state, en faisant appel aux mutations, via la fonction commit()

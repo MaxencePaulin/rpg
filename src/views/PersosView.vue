@@ -4,7 +4,7 @@
       <!-- partie gauche -->
       <div style="text-align: left; width: 30%">
         <h1>Les personnages</h1>
-        <select v-model="selected" class="persoselect">
+        <select v-model="selected" class="persoselect" @change="currentPerso(selected)">
           <option disabled value="">Sélectionner un personnage</option>
           <option v-for="(perso, index) in persos" :key="index" :value="perso">{{perso.nom}}</option>
         </select>
@@ -62,7 +62,7 @@
 
 <script>
 
-import {mapState} from 'vuex'
+import {mapState, mapMutations} from 'vuex'
 import CheckedList from "@/components/CheckedList";
 
 export default {
@@ -129,6 +129,12 @@ export default {
         // enleve index
         this.idSelectedBoughtItems.splice(id,1)
       }
+    },
+    ...mapMutations(['setCurrentPerso']),
+    currentPerso (perso) {
+        if (perso !== null) {
+          this.setCurrentPerso(perso)
+        }
     }
   },
 }
