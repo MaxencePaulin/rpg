@@ -86,10 +86,15 @@ export default {
     ...mapMutations(['sell']),
     buyOneItem(index) {
       console.log('achat de '+this.shop.itemStock[index].nom)
-        if (this.getOrCurrentPerso() >= this.shop.itemStock[index].prix) {
+        if (this.getOrCurrentPerso() === 0) {
+            alert('Vous devez sélectionner un personnage avant de pouvoir acheter des objets.')
+        }
+        else if (this.getOrCurrentPerso() < this.shop.itemStock[index].prix) {
+            alert('Vous n\'avez pas assez d\'argent pour acheter cet objet.')
+        }
+        else {
             return this.sell(this.shop.itemStock[index])
         }
-        alert('Pas assez d\'or ou pas de personnage sélectionné');
     },
     buySelectedItems() {
       console.log('achat des items d\'indice '+this.idSelectedItemsStock)

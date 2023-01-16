@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn v-for="(but, index) in titles" :key="index" :color="but.color" @click="$emit('menu-clicked', index)">
+    <v-btn class="navbtn" rounded v-for="(but, index) in titles" :key="index" :color="but.color" @click="$emit('menu-clicked', index)">
       {{but.text}}
     </v-btn>
   </div>
@@ -14,5 +14,7 @@ export default {
 </script>
 
 <style scoped>
-
+.navbtn {
+    margin: 5px;
+}
 </style>
