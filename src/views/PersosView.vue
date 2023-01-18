@@ -31,7 +31,7 @@
               <ul>
                 <li v-for="(slot, index) in slots" :key="index">
                   {{ slot.label }} <span v-if="slot.items.length >0">[{{slot.items.length}}]</span> :
-                  <span v-for="(item, index) in slot.items" :key="index">{{item.nom}}, </span>
+                  <span v-for="(item, index) in slot.items" :key="index">{{item.nom}} <v-btn v-if="slot.items.length > 0" color="amber" x-small @click="unset(slot, item)">Unset</v-btn>, </span>
                 </li>
               </ul>
             </td>
@@ -47,12 +47,31 @@
                   :item-button="{show: true, text: 'price'}"
                   :list-button="{show: true, text: 'Infos'}"
                   :sell-button="{show: true, text: 'Sell'}"
+                  :equip-button="{show: true, text: 'Set'}"
                   @checked-changed="toggleItem"
                   @item-button-clicked="showItemPrice"
                   @list-button-clicked="showItemsInfo"
                   @sell-button-clicked="sellItem"
+                  @equip-button-clicked="equipParams"
               >
               </CheckedList>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex">
+      <div class="mx-auto mt-2" style="text-align: center;">
+        <table v-if="curItem">
+          <tr>
+            <td colspan="2">Liste des endroits où vous pouvez équiper : {{ curItem.nom }}</td>
+          </tr>
+          <tr>
+            <td>Slot : {{possibleSlots.length}} slot possible</td>
+          </tr>
+          <tr>
+            <td>
+              <span v-for="(slot, index) in possibleSlots" :key="index">{{slot.slot}} <v-btn color="amber" x-small @click="equipItem(slot)">Set</v-btn>, </span>
             </td>
           </tr>
         </table>
@@ -73,9 +92,10 @@ export default {
   data: () => ({
     selected: null,
     idSelectedBoughtItems: [], // ce tableau ne contient que les ids des items achetés sélectionnés.
+    curItem: null,
   }),
   computed: {
-    ...mapState(['persos']),
+    ...mapState(['persos', 'possibleSlots']),
     checkedBoughtItems() {
       if (this.selected === null) return []
       // construit un tableau contenant autant de cases qu'il y a d'items achetés
@@ -146,6 +166,17 @@ export default {
       if (confirm('Vendre '+this.selected.itemsAchetes[index].nom+' pour '+prix+' or ?')) {
         this.$store.commit('resell', {item: this.selected.itemsAchetes[index], gold: prix})
       }   
+    },
+    equipParams(index) {
+      this.$store.commit('setPossibleSlot',this.selected.itemsAchetes[index])
+      this.curItem = this.selected.itemsAchetes[index]
+    },
+    equipItem(selectedSlot) {
+      this.$store.commit('equipItem', {slot: selectedSlot, item: this.curItem})
+      this.curItem = null;
+    },
+    unset(selectSlot, selctedItem) {
+      this.$store.commit('unsetItem', {slot: selectSlot, item: selctedItem})
     }
   },
 }

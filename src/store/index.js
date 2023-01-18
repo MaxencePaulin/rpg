@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 import TownService from '../services/towns.service'
 import CharacService from '../services/persos.service'
+import { itemLimits } from '@/services/data.service'
 
 export default new Vuex.Store({
   // state = les données centralisées
@@ -12,7 +13,8 @@ export default new Vuex.Store({
     villes: [],
     persos: [],
     currentPerso: null,
-    currentShop: null
+    currentShop: null,
+    possibleSlots: []
   }),
   getters: {
     getOrCurrentPerso (state) {
@@ -58,6 +60,27 @@ export default new Vuex.Store({
       state.currentPerso.itemsAchetes = state.currentPerso.itemsAchetes.filter(i => i._id !== data.item._id);
       state.currentShop.itemStock.push(data.item);
       state.currentPerso.or += data.gold;
+    },
+    setPossibleSlot(state, item) {
+      state.possibleSlots = itemLimits.filter(i => i.types.includes(item.type))
+    },
+    equipItem(state, data) {
+      if (!state.currentPerso) {
+        return null;
+      }
+
+      state.currentPerso.emplacements.forEach(e => {
+        if (e.nom === data.slot.slot) {
+          e.items.push(data.item);
+        }
+      });
+      // retirer l'item des items achetés
+      state.currentPerso.itemsAchetes = state.currentPerso.itemsAchetes.filter(i => i._id !== data.item._id);
+    },
+    unsetItem(state, data) {
+      console.log(state)
+      console.log(data)
+      // TODO : retirer l'item de l'emplacement
     }
   },
   // actions = fonctions asynchrone pour mettre à jour le state, en faisant appel aux mutations, via la fonction commit()
