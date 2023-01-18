@@ -4,23 +4,20 @@
       <!-- partie gauche -->
       <div style="text-align: left; width: 30%">
         <h1>Les villes</h1>
-        <label for="filteractive">filtrage possible : </label><input type="checkbox" v-model="filterActive" id="filteractive">
-        <div v-if="filterActive">
-          <label for="filtertown">filtre : </label><input class="townselect" :value="filter" @input="townSelected($event.target.value)" id="filtertown">
-        </div>
-        <ul>
-          <li v-for="(ville, index) in villesFiltre" :key="index">{{ville.nom}}</li>
-        </ul>
+        <select v-model="selected" class="villeselect" @change="currentTown(selected)">
+          <option disabled value="">Sélectionner une ville</option>
+          <option v-for="(ville, index) in villes" :key="index" :value="ville">{{ville.nom}}</option>
+        </select>
       </div>
       <!-- partie droite -->
-      <div v-if="currentTown" style="text-align: left; width: 80%">
-        <h1>{{currentTown.nom}}</h1>
+      <div v-if="selected" style="text-align: left; width: 80%">
+        <h1>{{this.selected.nom}}</h1>
         <table>
           <tr>
-          <th>rues: {{currentTown.rues.length}}</th>
+          <th>rues: {{this.selected.rues.length}}</th>
           <th>boutiques</th>
           </tr>
-          <tr v-for="(street, index) in currentTown.rues" :key="index">
+          <tr v-for="(street, index) in this.selected.rues" :key="index">
             <td>
               {{street.nom}} : {{ street.boutiques.length }} boutiques
             </td>
@@ -52,6 +49,7 @@ export default {
     filter: '',
     filterActive: false,
     currentShop: null,
+    selected: null,
   }),
   computed: {
     ...mapState(['villes']),
@@ -63,25 +61,22 @@ export default {
         return this.villes
       }
     },
-    currentTown() {
-      if (this.villesFiltre.length === 1) {
-        return this.villesFiltre[0]
-      }
-      else {
-        return null
-      }
-    }
   },
   methods: {
     townSelected(evt) {
       this.filter = evt
       this.currentShop = null // pour enlever la boutique courante affichée si on change de ville
     },
-    ...mapMutations(['setCurrentShop']),
+    ...mapMutations(['setCurrentShop', 'setCurrentTown']),
     shopSelected(streetIndex, shopIndex) {
-      this.currentShop = this.currentTown.rues[streetIndex].boutiques[shopIndex]
+      this.currentShop = this.selected.rues[streetIndex].boutiques[shopIndex]
       this.setCurrentShop(this.currentShop);
-    }
+    },
+    currentTown (ville) {
+        if (ville !== null) {
+          this.setCurrentTown(ville)
+        }
+    },
   },
 }
 </script>
@@ -90,7 +85,10 @@ export default {
 table, th, td {
   border: 1px solid;
 }
- .townselect {
-   background-color: lightgray;
- }
+.townselect {
+  background-color: lightgray;
+}
+.villeselect {
+  background-color: lightgray;
+}
 </style>

@@ -14,7 +14,8 @@ export default new Vuex.Store({
     persos: [],
     currentPerso: null,
     currentShop: null,
-    possibleSlots: []
+    possibleSlots: [],
+    currentTown: null,
   }),
   getters: {
     getOrCurrentPerso (state) {
@@ -76,6 +77,9 @@ export default new Vuex.Store({
     unsetItem(state, data) {
       state.currentPerso.emplacements[data.index].items = state.currentPerso.emplacements[data.index].items.filter(i => i._id !== data.item._id);
       state.currentPerso.itemsAchetes.push(data.item);
+    },
+    setCurrentTown (state, town) {
+      state.currentTown = town;
     }
   },
   // actions = fonctions asynchrone pour mettre à jour le state, en faisant appel aux mutations, via la fonction commit()
