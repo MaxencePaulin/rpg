@@ -46,9 +46,11 @@
                   item-check
                   :item-button="{show: true, text: 'price'}"
                   :list-button="{show: true, text: 'Infos'}"
+                  :sell-button="{show: true, text: 'Sell'}"
                   @checked-changed="toggleItem"
                   @item-button-clicked="showItemPrice"
                   @list-button-clicked="showItemsInfo"
+                  @sell-button-clicked="sellItem"
               >
               </CheckedList>
             </td>
@@ -135,6 +137,15 @@ export default {
         if (perso !== null) {
           this.setCurrentPerso(perso)
         }
+    },
+    sellItem(index) {
+      if (this.$store.state.currentShop === null) {
+        return alert("Vous devez d'abord séléctionner une boutique")
+      }
+      let prix = Math.floor(this.selected.itemsAchetes[index].prix * (0.4 + Math.random() * 0.5))
+      if (confirm('Vendre '+this.selected.itemsAchetes[index].nom+' pour '+prix+' or ?')) {
+        this.$store.commit('resell', {item: this.selected.itemsAchetes[index], gold: prix})
+      }   
     }
   },
 }

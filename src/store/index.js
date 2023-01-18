@@ -50,6 +50,14 @@ export default new Vuex.Store({
     },
     stock(state, item) {
       state.currentShop.itemStock.push(item);
+    },
+    resell(state, data) {
+      if (!state.currentShop) {
+        return null;
+      }
+      state.currentPerso.itemsAchetes = state.currentPerso.itemsAchetes.filter(i => i._id !== data.item._id);
+      state.currentShop.itemStock.push(data.item);
+      state.currentPerso.or += data.gold;
     }
   },
   // actions = fonctions asynchrone pour mettre à jour le state, en faisant appel aux mutations, via la fonction commit()
