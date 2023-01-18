@@ -101,6 +101,10 @@ export default {
     },
     orderOneItem(index) {
       console.log('commande de '+this.shop.itemCommande[index].nom)
+      let time = Math.floor(Math.random() * (10000 - 2000 + 1)) + 2000;
+      if (confirm('Commande de '+this.shop.itemCommande[index].nom+'. Temps estimé : '+time+' ms. Continuer ?')) {
+        this.$store.dispatch('order', {item: this.shop.itemCommande[index], time: time})  
+      }
     }
   },
   watch: {
