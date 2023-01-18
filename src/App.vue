@@ -9,7 +9,7 @@
     </v-app-bar>
 
     <v-main>
-      <router-view/>
+      <router-view name="central"/>
     </v-main>
   </v-app>
 </template>
@@ -23,22 +23,15 @@ export default {
   name: 'App',
   components: {NavBar},
   data: () => ({
-    titles: [ {text:'Personnages', color: 'blue'},
-      {text:'Villes', color: 'red'},
+    titles: [ {text:'Personnages', color: 'blue', path: '/persos'},
+      {text:'Villes', color: 'red', path: '/towns'},
     ],
     currentIndex: -1
   }),
   methods: {
     ...mapActions(['getAllTowns', 'getAllCharacs']),
     goTo(index) {
-      if (index !== this.currentIndex) {
-        this.currentIndex = index
-        if (index === 0) {
-          this.$router.push('persos')
-        } else if (index === 1) {
-          this.$router.push('towns')
-        }
-      }
+      console.log(index)
     }
   },
   mounted() {
