@@ -31,7 +31,7 @@
               <ul>
                 <li v-for="(slot, index) in slots" :key="index">
                   {{ slot.label }} <span v-if="slot.items.length >0">[{{slot.items.length}}]</span> :
-                  <span v-for="(item, index) in slot.items" :key="index">{{item.nom}} <v-btn v-if="slot.items.length > 0" color="amber" x-small @click="unset(slot, item)">Unset</v-btn>, </span>
+                  <span v-for="(item, indexi) in slot.items" :key="indexi">{{item.nom}} <v-btn v-if="slot.items.length > 0" color="amber" x-small @click="unset(index, item)">Unset</v-btn>, </span>
                 </li>
               </ul>
             </td>
@@ -175,8 +175,8 @@ export default {
       this.$store.commit('equipItem', {slot: selectedSlot, item: this.curItem})
       this.curItem = null;
     },
-    unset(selectSlot, selctedItem) {
-      this.$store.commit('unsetItem', {slot: selectSlot, item: selctedItem})
+    unset(indexSlot, selctedItem) {
+      this.$store.commit('unsetItem', {index: indexSlot, item: selctedItem})
     }
   },
 }

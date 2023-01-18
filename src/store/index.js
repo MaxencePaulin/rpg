@@ -65,10 +65,6 @@ export default new Vuex.Store({
       state.possibleSlots = itemLimits.filter(i => i.types.includes(item.type))
     },
     equipItem(state, data) {
-      if (!state.currentPerso) {
-        return null;
-      }
-
       state.currentPerso.emplacements.forEach(e => {
         if (e.nom === data.slot.slot) {
           e.items.push(data.item);
@@ -78,9 +74,8 @@ export default new Vuex.Store({
       state.currentPerso.itemsAchetes = state.currentPerso.itemsAchetes.filter(i => i._id !== data.item._id);
     },
     unsetItem(state, data) {
-      console.log(state)
-      console.log(data)
-      // TODO : retirer l'item de l'emplacement
+      state.currentPerso.emplacements[data.index].items = state.currentPerso.emplacements[data.index].items.filter(i => i._id !== data.item._id);
+      state.currentPerso.itemsAchetes.push(data.item);
     }
   },
   // actions = fonctions asynchrone pour mettre à jour le state, en faisant appel aux mutations, via la fonction commit()
