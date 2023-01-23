@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import {mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
 
 export default {
     name: "StreetsView",
@@ -55,8 +55,10 @@ export default {
         }
     },
     methods: {
+        ...mapMutations(['setCurrentShop']),
         currentStreet(street) {
             if (street !== null) {
+                this.setCurrentShop(null)
                 this.$router.push({name: 'shops', params: {idtown: this.selected._id, idstreet: street._id}})
             }
         },

@@ -14,7 +14,7 @@
             <router-view name="streets"></router-view>
         </div>
     </div>
-      <div v-if="currentShop" class="mt-5">
+      <div v-if="currentShop" class="mt-10">
           <ShopDetails :shop="currentShop"></ShopDetails>
       </div>
   </v-container>

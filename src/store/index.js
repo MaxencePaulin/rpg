@@ -83,6 +83,7 @@ export default new Vuex.Store({
       state.currentPerso.itemsAchetes.push(data.item);
     },
     setCurrentTown (state, town) {
+      state.currentShop = null;
       state.currentTown = town;
     }
   },
