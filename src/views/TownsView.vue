@@ -6,75 +6,48 @@
         <h1>Les villes</h1>
         <select v-model="selected" class="villeselect" @change="currentTown(selected)">
           <option disabled value="">Sélectionner une ville</option>
-          <option v-for="(ville, index) in villes" :key="index" :value="ville">{{ville.nom}}</option>
+          <option v-for="ville in villes" :key="ville._id" :value="ville">{{ville.nom}}</option>
         </select>
       </div>
       <!-- partie droite -->
-      <div v-if="selected" style="text-align: left; width: 80%">
-        <h1>{{this.selected.nom}}</h1>
-        <table>
-          <tr>
-          <th>rues: {{this.selected.rues.length}}</th>
-          <th>boutiques</th>
-          </tr>
-          <tr v-for="(street, index) in this.selected.rues" :key="index">
-            <td>
-              {{street.nom}} : {{ street.boutiques.length }} boutiques
-            </td>
-            <td>
-              <CheckedList
-                  :data="street.boutiques"
-                  :fields="['nom']"
-                  :item-button="{show: true, text: 'select'}"
-                  @item-button-clicked="shopSelected(index, $event)"
-              >
-              </CheckedList>
-            </td>
-          </tr>
-        </table>
-        <ShopDetails :shop="currentShop"></ShopDetails>
-      </div>
+        <div v-if="selected" style="text-align: left; width: 70%">
+            <router-view name="streets"></router-view>
+        </div>
     </div>
+      <div v-if="currentShop" class="mt-5">
+          <ShopDetails :shop="currentShop"></ShopDetails>
+      </div>
   </v-container>
 </template>
 
 <script>
-import CheckedList from "@/components/CheckedList";
-import ShopDetails from "@/components/ShopDetails";
+
 import {mapState, mapMutations} from 'vuex'
+import ShopDetails from "@/components/ShopDetails";
 export default {
   name: 'TownsView',
-  components: {CheckedList, ShopDetails},
+  components: {
+    ShopDetails
+  },
   data: () => ({
     filter: '',
     filterActive: false,
-    currentShop: null,
     selected: null,
   }),
   computed: {
-    ...mapState(['villes']),
-    villesFiltre() {
-      if (this.filterActive) {
-        return this.villes.filter(v => v.nom.includes(this.filter))
-      }
-      else {
-        return this.villes
-      }
-    },
+      ...mapState(['currentShop']),
+      ...mapState(['villes']),
   },
   methods: {
     townSelected(evt) {
       this.filter = evt
       this.currentShop = null // pour enlever la boutique courante affichée si on change de ville
     },
-    ...mapMutations(['setCurrentShop', 'setCurrentTown']),
-    shopSelected(streetIndex, shopIndex) {
-      this.currentShop = this.selected.rues[streetIndex].boutiques[shopIndex]
-      this.setCurrentShop(this.currentShop);
-    },
+    ...mapMutations(['setCurrentTown']),
     currentTown (ville) {
         if (ville !== null) {
-          this.setCurrentTown(ville)
+            this.setCurrentTown(ville)
+            this.$router.push({name: 'streets', params: {idtown: ville._id}})
         }
     },
   },
