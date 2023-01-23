@@ -172,7 +172,12 @@ export default {
       this.curItem = this.selected.itemsAchetes[index]
     },
     equipItem(selectedSlot) {
-      this.$store.commit('equipItem', {slot: selectedSlot, item: this.curItem})
+      let size = this.selected.emplacements.find(s => s.nom === selectedSlot.slot).items.length
+      console.log(size)
+      if (size >= selectedSlot.limit) {
+        return alert("Vous ne pouvez pas mettre d'avantage d'item dans cet emplacement")
+      }
+      this.$store.commit('equipItem', {slot: selectedSlot, item: this.curItem, size: size})
       this.curItem = null;
     },
     unset(indexSlot, selctedItem) {

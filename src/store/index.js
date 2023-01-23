@@ -66,6 +66,10 @@ export default new Vuex.Store({
       state.possibleSlots = itemLimits.filter(i => i.types.includes(item.type))
     },
     equipItem(state, data) {
+      console.log(data.slot)
+      if (data.size >= data.slot.limit) {
+        return;
+      }
       state.currentPerso.emplacements.forEach(e => {
         if (e.nom === data.slot.slot) {
           e.items.push(data.item);
