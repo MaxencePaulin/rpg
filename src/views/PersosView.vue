@@ -4,77 +4,14 @@
       <!-- partie gauche -->
       <div style="text-align: left; width: 30%">
         <h1>Les personnages</h1>
-        <select v-model="selected" class="persoselect" @change="currentPerso(selected)">
+        <select v-model="selected" class="persoselect" @change="setcurrentPerso(selected)">
           <option disabled value="">Sélectionner un personnage</option>
           <option v-for="(perso, index) in persos" :key="index" :value="perso">{{perso.nom}}</option>
         </select>
       </div>
       <!-- partie droite -->
-      <div v-if="selected" style="text-align: left; width: 80%">
-        <h1>{{selected.nom}}</h1>
-        <table>
-          <tr>
-            <th>Attributs</th>
-            <th>Emplacements</th>
-          </tr>
-          <tr>
-            <td>
-              <ul>
-                <li>niveau : {{ selected.niveau}}</li>
-                <li>vie : {{ selected.attributs.vie}}</li>
-                <li>vitalité : {{ selected.attributs.vitalite}}</li>
-                <li>force : {{ selected.attributs.force}}</li>
-                <li>armure : {{ selected.attributs.protection}}</li>
-              </ul>
-            </td>
-            <td>
-              <ul>
-                <li v-for="(slot, index) in slots" :key="index">
-                  {{ slot.label }} <span v-if="slot.items.length >0">[{{slot.items.length}}]</span> :
-                  <span v-for="(item, indexi) in slot.items" :key="indexi">{{item.nom}} <v-btn v-if="slot.items.length > 0" color="amber" x-small @click="unset(index, item)">Unset</v-btn>, </span>
-                </li>
-              </ul>
-            </td>
-          </tr>
-          <tr>
-            <td> or : {{selected.or}}</td>
-            <td>
-              <CheckedList
-                  :data="selected.itemsAchetes"
-                  :fields="['nom','type']"
-                  :checked="checkedBoughtItems"
-                  item-check
-                  :item-button="{show: true, text: 'price'}"
-                  :list-button="{show: true, text: 'Infos'}"
-                  :sell-button="{show: true, text: 'Sell'}"
-                  :equip-button="{show: true, text: 'Set'}"
-                  @checked-changed="toggleItem"
-                  @item-button-clicked="showItemPrice"
-                  @list-button-clicked="showItemsInfo"
-                  @sell-button-clicked="sellItem"
-                  @equip-button-clicked="equipParams"
-              >
-              </CheckedList>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-    <div style="display:flex">
-      <div class="mx-auto mt-2" style="text-align: center;">
-        <table v-if="curItem">
-          <tr>
-            <td colspan="2">Liste des endroits où vous pouvez équiper : {{ curItem.nom }}</td>
-          </tr>
-          <tr>
-            <td>Slot : {{possibleSlots.length}} slot possible</td>
-          </tr>
-          <tr>
-            <td>
-              <span v-for="(slot, index) in possibleSlots" :key="index">{{slot.slot}} <v-btn color="amber" x-small @click="equipItem(slot)">Set</v-btn>, </span>
-            </td>
-          </tr>
-        </table>
+      <div v-if="currentPerso != null">
+          <PersoCaracs />
       </div>
     </div>
   </v-container>
@@ -84,105 +21,25 @@
 <script>
 
 import {mapState, mapMutations} from 'vuex'
-import CheckedList from "@/components/CheckedList";
+import PersoCaracs from "@/components/PersoCaracs";
 
 export default {
   name: 'PersosView',
-  components: {CheckedList},
+  components: {PersoCaracs},
   data: () => ({
     selected: null,
-    idSelectedBoughtItems: [], // ce tableau ne contient que les ids des items achetés sélectionnés.
-    curItem: null,
   }),
   computed: {
-    ...mapState(['persos', 'possibleSlots']),
-    checkedBoughtItems() {
-      if (this.selected === null) return []
-      // construit un tableau contenant autant de cases qu'il y a d'items achetés
-      // chaque case contient true/false en fonction du fait que l'item est sélectionné ou non
-      let tab = []
-      for(let i=0;i<this.selected.itemsAchetes.length;i++) {
-        if (this.idSelectedBoughtItems.includes(i)) tab.push(true)
-        else tab.push(false)
-      }
-      return tab
-    },
-    // récupère la liste des emplacements du personnage courant afin de
-    // les classer dans l'ordre qu'il convient pour l'affichage, avec le nom en français.
-    slots() {
-      if (this.selected) {
-        let tab = [];
-        let slot = this.selected.emplacements.find(s => s.nom === 'head')
-        slot.label = 'tête'
-        tab.push(slot)
-        slot = this.selected.emplacements.find(s => s.nom === 'body')
-        slot.label = 'corps'
-        tab.push(slot)
-        slot = this.selected.emplacements.find(s => s.nom === 'hands')
-        slot.label = 'mains'
-        tab.push(slot)
-        slot = this.selected.emplacements.find(s => s.nom === 'belt')
-        slot.label = 'ceinture'
-        tab.push(slot)
-        slot = this.selected.emplacements.find(s => s.nom === 'bag')
-        slot.label = 'sac à dos'
-        tab.push(slot)
-        return tab
-      }
-      return []
-    }
+    ...mapState(['persos', "currentPerso"]),
   },
   methods: {
-    showItemPrice(index) {
-      alert(this.selected.itemsAchetes[index].nom+' : '+ this.selected.itemsAchetes[index].prix)
-    },
-    showItemsInfo() {
-      let items = ""
-      this.idSelectedBoughtItems.forEach(e => items += ' '+this.selected.itemsAchetes[e].nom)
-      alert(items)
-    },
-    toggleItem(index) {
-      let id = this.idSelectedBoughtItems.indexOf(index)
-      if (id === -1) {
-        // ajoute index
-        this.idSelectedBoughtItems.push(index)
-      }
-      else {
-        // enleve index
-        this.idSelectedBoughtItems.splice(id,1)
-      }
-    },
     ...mapMutations(['setCurrentPerso']),
-    currentPerso (perso) {
+    setcurrentPerso (perso) {
         if (perso !== null) {
-          this.setCurrentPerso(perso)
+          return this.setCurrentPerso(perso)
         }
+        return null
     },
-    sellItem(index) {
-      if (this.$store.state.currentShop === null) {
-        return alert("Vous devez d'abord séléctionner une boutique")
-      }
-      let prix = Math.floor(this.selected.itemsAchetes[index].prix * (0.4 + Math.random() * 0.5))
-      if (confirm('Vendre '+this.selected.itemsAchetes[index].nom+' pour '+prix+' or ?')) {
-        this.$store.commit('resell', {item: this.selected.itemsAchetes[index], gold: prix})
-      }   
-    },
-    equipParams(index) {
-      this.$store.commit('setPossibleSlot',this.selected.itemsAchetes[index])
-      this.curItem = this.selected.itemsAchetes[index]
-    },
-    equipItem(selectedSlot) {
-      let size = this.selected.emplacements.find(s => s.nom === selectedSlot.slot).items.length
-      console.log(size)
-      if (size >= selectedSlot.limit) {
-        return alert("Vous ne pouvez pas mettre d'avantage d'item dans cet emplacement")
-      }
-      this.$store.commit('equipItem', {slot: selectedSlot, item: this.curItem, size: size})
-      this.curItem = null;
-    },
-    unset(indexSlot, selctedItem) {
-      this.$store.commit('unsetItem', {index: indexSlot, item: selctedItem})
-    }
   },
 }
 </script>

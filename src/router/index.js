@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import TownsView from '../views/TownsView.vue'
 import StreetsView from '../components/StreetsView.vue'
 import ShopsView from '../components/ShopsView.vue'
+import SlotEdit from "@/components/SlotEdit.vue";
 
 Vue.use(VueRouter)
 
@@ -46,7 +47,19 @@ const routes = [
         // which is lazy-loaded when the route is visited.
         components: {
             central: () => import(/* webpackChunkName: "about" */ '../views/PersosView.vue')
-        }
+        },
+        children: [
+            {
+                path: 'slot/:name',
+                name: 'slot',
+                components: {
+                    slot: SlotEdit,
+                },
+                props: {
+                    slot: route => ({ slotName: route.params.name })
+                }
+            }
+        ]
     }
 ]
 
