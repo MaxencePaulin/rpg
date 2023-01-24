@@ -3,7 +3,7 @@
         <h1>Nombre d'item sur l'emplacement "{{slot.label}}" : {{slot.items.length}}</h1>
         <ul v-if="slot.items.length > 0">
             <li v-for="(item, index) in slot.items" :key="index">
-                {{ item.nom }} <v-btn v-if="slot.items.length > 0" color="amber" x-small @click="$emit('unset-event', {index, item})">Unset</v-btn>
+                {{ item.nom }} <v-btn v-if="slot.items.length > 0" color="amber" x-small @click="$emit('unset-event', {slotName, item})">Unset</v-btn>
             </li>
         </ul>
         <ul v-else>
@@ -20,6 +20,9 @@ export default {
     props: {
         slotName: String,
     },
+    data: () => ({
+        //
+    }),
     computed: {
         ...mapState(['currentPerso', 'possibleSlots']),
         slot () {
@@ -28,7 +31,6 @@ export default {
     },
     methods: {
         ...mapMutations(['setPossibleSlot']),
-
     },
 }
 </script>

@@ -83,6 +83,7 @@ export default {
     data: () => ({
         idSelectedBoughtItems: [], // ce tableau ne contient que les ids des items achetés sélectionnés.
         curItem: null,
+        display: false,
     }),
     computed: {
         ...mapState(['currentPerso', 'possibleSlots']),
@@ -164,13 +165,16 @@ export default {
             }
             this.$store.commit('equipItem', {slot: selectedSlot, item: this.curItem, size: size})
             this.curItem = null;
+            this.$router.push({name: 'slot', params: {name: selectedSlot.slot}}).catch(() => {})
         },
         unset(event) {
-            this.$store.commit('unsetItem', {index: event.index, item: event.item})
+            this.$store.commit('unsetItem', {slotName: event.slotName, item: event.item})
         },
         lvl2(slot) {
             console.log(slot.nom)
-            this.$router.push({name: 'slot', params: {name: slot.nom}}).catch(() => {})
+            this.display = true
+            this.$router.push({name: 'slot', params: {name: slot.nom}}).catch(() => 
+            {this.$router.push({name: 'persos'})})
         }
     }
 }
