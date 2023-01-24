@@ -52,22 +52,22 @@
             </table>
         </div>
         <div style="display:flex">
-            <router-view name="slot"></router-view>
-<!--            <div class="mx-auto mt-2" style="text-align: center;">-->
-<!--                <table v-if="curItem">-->
-<!--                    <tr>-->
-<!--                        <td colspan="2">Liste des endroits où vous pouvez équiper : {{ curItem.nom }}</td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <td>Slot : {{possibleSlots.length}} slot possible</td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <td>-->
-<!--                            <span v-for="(slot, index) in possibleSlots" :key="index">{{slot.slot}} <v-btn color="amber" x-small @click="equipItem(slot)">Set</v-btn>, </span>-->
-<!--                        </td>-->
-<!--                    </tr>-->
-<!--                </table>-->
-<!--            </div>-->
+            <router-view name="slot" @unset-event="unset"></router-view>
+            <div class="mx-auto mt-2" style="text-align: center;">
+                <table v-if="curItem">
+                    <tr>
+                        <td colspan="2">Liste des endroits où vous pouvez équiper : {{ curItem.nom }}</td>
+                    </tr>
+                    <tr>
+                        <td>Slot : {{possibleSlots.length}} slot possible</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span v-for="(slot, index) in possibleSlots" :key="index">{{slot.slot}} <v-btn color="amber" x-small @click="equipItem(slot)">Set</v-btn>, </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 </template>
@@ -165,8 +165,8 @@ export default {
             this.$store.commit('equipItem', {slot: selectedSlot, item: this.curItem, size: size})
             this.curItem = null;
         },
-        unset(indexSlot, selctedItem) {
-            this.$store.commit('unsetItem', {index: indexSlot, item: selctedItem})
+        unset(event) {
+            this.$store.commit('unsetItem', {index: event.index, item: event.item})
         },
         lvl2(slot) {
             console.log(slot.nom)
