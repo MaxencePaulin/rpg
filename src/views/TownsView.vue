@@ -3,14 +3,14 @@
     <div style="display: flex">
       <!-- partie gauche -->
       <div style="text-align: left; width: 30%">
-        <h1>Les villes</h1>
+        <h1>Les villes :</h1>
         <select v-model="selected" class="villeselect" @change="currentTown(selected)">
           <option disabled value="">Sélectionner une ville</option>
           <option v-for="ville in villes" :key="ville._id" :value="ville">{{ville.nom}}</option>
         </select>
       </div>
       <!-- partie droite -->
-        <div v-if="selected" style="text-align: left; width: 70%">
+        <div v-if="selected" style="text-align: left; width: 100%">
             <router-view name="streets"></router-view>
         </div>
     </div>

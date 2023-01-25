@@ -23,8 +23,8 @@
               <template #item="{item}">
                   {{item.nom}} : {{item.prix}} po
               </template>
-              <template #item-button="{item, indexRow}">
-                  <v-btn :color="indexRow % 2 === 0 ? 'red' : 'blue'" x-small @click="buyOneItem(item)">Buy</v-btn>
+              <template #item-button="{indexRow}">
+                  <v-btn :color="indexRow % 2 === 0 ? 'red' : 'blue'" x-small @click="buyOneItem(indexRow)">Buy</v-btn>
               </template>
               <template #list-button>
                   <v-btn color="green" x-small @click="buySelectedItems">Buy selected</v-btn>

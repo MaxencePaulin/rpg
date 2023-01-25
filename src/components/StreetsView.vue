@@ -1,7 +1,7 @@
 <template>
     <div style="display: flex">
         <!-- partie gauche -->
-        <div style="text-align: left; width: 30%">
+        <div style="text-align: left; width: 70%">
             <h1>Les rues de {{this.selected.nom}}:</h1>
             <select v-model="selectedStreets" class="villeselect" @change="currentStreet(selectedStreets)">
                 <option disabled value="">Sélectionner une ville</option>
