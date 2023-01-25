@@ -5,7 +5,7 @@
       <div style="text-align: left; width: 30%">
         <h1>Les villes :</h1>
         <select v-model="selected" class="villeselect" @change="currentTown(selected)">
-          <option disabled value="">Sélectionner une ville</option>
+          <option disabled value="-1" selected>Sélectionner une ville</option>
           <option v-for="ville in villes" :key="ville._id" :value="ville">{{ville.nom}}</option>
         </select>
       </div>
@@ -32,7 +32,7 @@ export default {
   data: () => ({
     filter: '',
     filterActive: false,
-    selected: null,
+    selected: -1,
   }),
   computed: {
       ...mapState(['currentShop']),
@@ -58,10 +58,10 @@ export default {
 table, th, td {
   border: 1px solid;
 }
-.townselect {
-  background-color: lightgray;
-}
 .villeselect {
-  background-color: lightgray;
+    background-color: #AB6A00;
+    opacity: 0.75;
+    border-radius: 10px;
+    padding: 5px;
 }
 </style>

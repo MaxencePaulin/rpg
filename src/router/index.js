@@ -9,6 +9,13 @@ Vue.use(VueRouter)
 
 const routes = [
     {
+        path: '/',
+        name: 'home',
+        components: {
+            central: () => import(/* webpackChunkName: "about" */ '../views/HomeView.vue')
+        }
+    },
+    {
         path: '/towns',
         name: 'towns',
         components: {
@@ -22,7 +29,7 @@ const routes = [
                     streets: StreetsView
                 },
                 props: {
-                    streets: route => ({ idTown: route.params.idtown })
+                    streets: route => ({ idTown: parseInt(route.params.idtown) })
                 },
                 children: [
                     {
@@ -32,7 +39,7 @@ const routes = [
                             shops: ShopsView
                         },
                         props: {
-                            shops: route => ({ idTown: route.params.idtown, idStreet: route.params.idstreet })
+                            shops: route => ({ idTown: parseInt(route.params.idtown), idStreet: parseInt(route.params.idstreet) })
                         }
                     }
                 ]

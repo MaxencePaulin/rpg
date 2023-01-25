@@ -5,13 +5,13 @@
       <div style="text-align: left; width: 30%">
         <h1>Les personnages</h1>
         <select v-model="selected" class="persoselect" @change="setcurrentPerso(selected)">
-          <option disabled value="">Sélectionner un personnage</option>
+          <option disabled value="-1" selected>Sélectionner un personnage</option>
           <option v-for="(perso, index) in persos" :key="index" :value="perso">{{perso.nom}}</option>
         </select>
       </div>
       <!-- partie droite -->
       <div v-if="currentPerso != null">
-          <PersoCaracs :change="selected">
+          <PersoCaracs :change="selected === -1 ? {} : selected">
               <template #skills="{niveau, vie, vitalite}">
                   <div class="mx-2">
                       <v-icon v-for="i in niveau" :key="i" color="orange">mdi-star</v-icon>
@@ -53,7 +53,7 @@ export default {
   name: 'PersosView',
   components: {PersoCaracs, Icon},
   data: () => ({
-    selected: null,
+    selected: -1,
   }),
   computed: {
     ...mapState(['persos', "currentPerso"]),
@@ -99,6 +99,9 @@ export default {
 
 <style>
 .persoselect {
-  background-color: lightgray;
+  background-color: #AB6A00;
+    opacity: 0.75;
+    border-radius: 10px;
+    padding: 5px;
 }
 </style>

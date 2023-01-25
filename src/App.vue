@@ -27,8 +27,11 @@ export default {
   name: 'App',
   components: {NavBar},
   data: () => ({
-    titles: [ {text:'Personnages', color: 'blue', path: '/persos'},
+    titles: [
+        {text:'Accueil', color: 'green', path: '/'},
+        {text:'Personnages', color: 'blue', path: '/persos'},
       {text:'Villes', color: 'red', path: '/towns'},
+
     ],
     currentIndex: -1
   }),

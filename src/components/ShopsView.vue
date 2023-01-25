@@ -3,7 +3,7 @@
     <div style="text-align: left; width: 100%">
         <h1>Les boutiques de {{this.selectedStreet.nom}}:</h1>
         <select v-model="selectedShop" class="villeselect" @change="currentShop(selectedShop)">
-            <option disabled value="">Sélectionner une boutique</option>
+            <option disabled value="" >Sélectionner une boutique</option>
             <option v-for="shop in this.selectedStreet.boutiques" :key="shop._id" :value="shop">{{shop.nom}}</option>
         </select>
     </div>

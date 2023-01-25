@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex">
+    <div style="display: flex" v-if="selected != null">
         <!-- partie gauche -->
         <div style="text-align: left; width: 70%">
             <h1>Les rues de {{this.selected.nom}}:</h1>
@@ -51,6 +51,9 @@ export default {
     computed: {
         ...mapState(['villes']),
         selected() {
+            if (this.idTown <= 0) {
+                return null
+            }
             return this.villes.find(v => v._id === this.idTown)
         }
     },
