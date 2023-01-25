@@ -17,12 +17,15 @@
                       <v-icon v-for="i in niveau" :key="i" color="orange">mdi-star</v-icon>
                       <br>
                       Vie : {{vie}} / {{vitalite}}
-                      <v-progress-linear
-                          :value="(vie/vitalite * 100)"
-                          color="green"
-                          background-color="red"
-                          height="10"
-                      ></v-progress-linear>
+                      <div style="display: flex"><v-icon color="red" class="mr-1">mdi-heart</v-icon>
+                          <v-progress-linear
+                              :value="(vie/vitalite * 100)"
+                              color="green"
+                              background-color="red"
+                              height="10"
+                              class="mt-2"
+                          ></v-progress-linear>
+                      </div>
                   </div>
 
               </template>

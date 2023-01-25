@@ -9,7 +9,7 @@
                         <th>Emplacements</th>
                     </tr>
                     <tr>
-                        <td>
+                        <td style="width: 25vh;">
                             <slot name="skills"
                                   :niveau="currentPerso.niveau"
                                   :vie="currentPerso.attributs.vie"
@@ -20,7 +20,7 @@
                                 <li>armure : {{ currentPerso.attributs.protection}}</li>
                             </ul>
                         </td>
-                        <td>
+                        <td >
                             <ul>
                                 <li v-for="(slot, index) in slots" :key="index">
                                     <v-btn rounded color="primary" class="mt-1 mb-1" small @click="lvl2(slot)">
@@ -244,6 +244,8 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+td {
+    padding: 2vh;
+}
 </style>
