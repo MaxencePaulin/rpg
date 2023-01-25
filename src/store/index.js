@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 import TownService from '../services/towns.service'
 import CharacService from '../services/persos.service'
-import { itemLimits } from '@/services/data.service'
+import { itemLimits, itemCats } from '@/services/data.service'
 
 export default new Vuex.Store({
   // state = les données centralisées
@@ -51,6 +51,13 @@ export default new Vuex.Store({
     },
     setCurrentShop(state, shop) {
       state.currentShop = shop;
+      if (shop !== null) {
+        let color = ['red', 'green', 'blue', 'orange', 'yellow', 'magenta', 'ligthgray', 'lime', 'purple', 'lightblue']
+        // ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown', 'grey', 'lightblue'];
+        state.currentShop.itemCommande.forEach(item => {
+          item.color = color[itemCats.indexOf(item.type)]
+        })
+      }
     },
     stock(state, item) {
       state.currentShop.itemStock.push(item);

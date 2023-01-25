@@ -12,11 +12,10 @@
         <td>
           <CheckedList
               :data="shop.itemStock"
-              :fields="['text']"
               :checked="checkedItemsStock"
               item-check
-              :item-button="{show: true, text: 'acheter'}"
-              :list-button="{show: true, text: 'acheter sélectionnés'}"
+              :item-button="true"
+              :list-button="true"
               @checked-changed="toggleItemStock"
               @item-button-clicked="buyOneItem"
               @list-button-clicked="buySelectedItems"
@@ -35,15 +34,14 @@
         <td>
           <CheckedList
               :data="shop.itemCommande"
-              :fields="['text']"
-              :item-button="{show: true, text: 'commander'}"
+              :item-button="true"
               @item-button-clicked="orderOneItem"
           >
               <template #item="{item}">
                   {{item.nom}} : {{item.time = Math.floor(Math.random() * (10000 - 2000 + 1)) + 2000}} ms
               </template>
               <template #item-button="{item}">
-                  <v-btn :color="['red', 'green', 'blue', 'orange', 'yellow', 'magenta', 'ligthgray', 'lime', 'purple', 'lightblue'][itemCats.indexOf(item.type)]" x-small @click="orderOneItem(item)">Order</v-btn>
+                  <v-btn :color="item.color" x-small @click="orderOneItem(item)">Order</v-btn>
               </template>
           </CheckedList>
         </td>
@@ -55,7 +53,6 @@
 <script>
 import CheckedList from "@/components/CheckedList";
 import {mapGetters, mapMutations} from 'vuex'
-import { itemCats } from "@/services/data.service";
 
 export default {
   name: "ShopDetails",
@@ -65,7 +62,6 @@ export default {
   },
   data: () => ({
     idSelectedItemsStock: [],
-      itemCats:itemCats,
   }),
   computed: {
     checkedItemsStock() {
