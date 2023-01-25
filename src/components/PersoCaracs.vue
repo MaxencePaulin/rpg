@@ -2,78 +2,97 @@
     <div>
         <div style="text-align: left; width: 100%">
             <h1>{{currentPerso.nom}}</h1>
-            <table>
-                <tr>
-                    <th>Attributs</th>
-                    <th>Emplacements</th>
-                </tr>
-                <tr>
-                    <td>
-                        <ul>
-                            <li>niveau : {{ currentPerso.niveau}}</li>
-                            <li>vie : {{ currentPerso.attributs.vie}}</li>
-                            <li>vitalité : {{ currentPerso.attributs.vitalite}}</li>
-                            <li>force : {{ currentPerso.attributs.force}}</li>
-                            <li>armure : {{ currentPerso.attributs.protection}}</li>
-                        </ul>
-                    </td>
-                    <td>
-
-                        <ul>
-                            <li v-for="(slot, index) in slots" :key="index">
-                                <v-btn rounded color="primary" class="mt-1 mb-1" small @click="lvl2(slot)">
-                                    {{slot.label}}
-                                </v-btn>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td> or : {{currentPerso.or}}</td>
-                    <td>
-                        <CheckedList
-                            :data="currentPerso.itemsAchetes"
-                            :fields="['nom','type']"
-                            :checked="checkedBoughtItems"
-                            item-check
-                            :item-button="{show: true, text: 'price'}"
-                            :list-button="{show: true, text: 'Infos'}"
-                            :sell-button="{show: true, text: 'Sell'}"
-                            :equip-button="{show: true, text: 'Set'}"
-                            @checked-changed="toggleItem"
-                            @item-button-clicked="showItemPrice"
-                            @list-button-clicked="showItemsInfo"
-                            @sell-button-clicked="sellItem"
-                            @equip-button-clicked="equipParams"
-                        >
-                        </CheckedList>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div style="display:flex">
-            <router-view name="slot" @unset-event="unset"></router-view>
-            <div class="mx-auto mt-2" style="text-align: center;">
-                <table v-if="curItem">
+            <div style="display: flex">
+                <table>
                     <tr>
-                        <td colspan="2">Liste des endroits où vous pouvez équiper : {{ curItem.nom }}</td>
-                    </tr>
-                    <tr>
-                        <td>Slot : {{possibleSlots.length}} slot possible</td>
+                        <th>Attributs</th>
+                        <th>Emplacements</th>
                     </tr>
                     <tr>
                         <td>
-                            <span v-for="(slot, index) in possibleSlots" :key="index">{{slot.slot}} <v-btn color="amber" x-small @click="equipItem(slot)">Set</v-btn>, </span>
+                            <ul>
+                                <li>niveau : {{ currentPerso.niveau}}</li>
+                                <li>vie : {{ currentPerso.attributs.vie}}</li>
+                                <li>vitalité : {{ currentPerso.attributs.vitalite}}</li>
+                                <li>force : {{ currentPerso.attributs.force}}</li>
+                                <li>armure : {{ currentPerso.attributs.protection}}</li>
+                            </ul>
+                        </td>
+                        <td>
+
+                            <ul>
+                                <li v-for="(slot, index) in slots" :key="index">
+                                    <v-btn rounded color="primary" class="mt-1 mb-1" small @click="lvl2(slot)">
+                                        {{slot.label}}
+                                    </v-btn>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> or : {{currentPerso.or}}</td>
+                        <td>
+                            <CheckedList
+                                :data="currentPerso.itemsAchetes"
+                                :fields="['nom','type']"
+                                :checked="checkedBoughtItems"
+                                item-check
+                                :item-button="{show: true, text: 'price'}"
+                                :list-button="{show: true, text: 'Infos'}"
+                                :sell-button="{show: true, text: 'Sell'}"
+                                :equip-button="{show: true, text: 'Set'}"
+                                @checked-changed="toggleItem"
+                                @item-button-clicked="showItemPrice"
+                                @list-button-clicked="showItemsInfo"
+                                @sell-button-clicked="sellItem"
+                                @equip-button-clicked="equipParams"
+                            >
+                            </CheckedList>
                         </td>
                     </tr>
                 </table>
+                <div class="mx-auto mt-2 ml-5" style="text-align: center;">
+                    <div>
+                        <table v-if="curItem">
+                            <tr>
+                                <td colspan="2">Liste des endroits où vous pouvez équiper : {{ curItem.nom }}</td>
+                            </tr>
+                            <tr>
+                                <td>Slot : {{possibleSlots.length}} slot possible</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span v-for="(slot, index) in possibleSlots" :key="index">{{slot.slot}} <v-btn color="amber" x-small @click="equipItem(slot)">Set</v-btn>, </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div v-if="curSlot" class="mt-5">
+                        <table>
+                            <tr>
+                                <td colspan="2">Liste des items que vous pouvez équiper sur {{curSlot.slot}} : {{curSlot.label}}</td>
+                            </tr>
+                            <tr>
+                                <td>Item : {{possibleItems.length}} item possible</td>
+                            </tr>
+                            <tr v-if="possibleItems.length > 0">
+                                <td>
+                                    <span v-for="(item, index) in possibleItems" :key="index">{{item.nom}} <v-btn color="amber" x-small @click="equipSelectedItem(curSlot, item)">Set</v-btn>, </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
+        </div>
+        <div style="display:flex">
+            <router-view name="slot" @unset-event="unset"></router-view>
         </div>
     </div>
 </template>
 
 <script>
-import {mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
 
 export default {
     name: "PersoCaracs",
@@ -83,10 +102,10 @@ export default {
     data: () => ({
         idSelectedBoughtItems: [], // ce tableau ne contient que les ids des items achetés sélectionnés.
         curItem: null,
-        display: false,
+        curSlot: null,
     }),
     computed: {
-        ...mapState(['currentPerso', 'possibleSlots']),
+        ...mapState(['currentPerso', 'possibleSlots', 'possibleItems']),
         checkedBoughtItems() {
             if (this.currentPerso === null) return []
             // construit un tableau contenant autant de cases qu'il y a d'items achetés
@@ -159,22 +178,40 @@ export default {
         },
         equipItem(selectedSlot) {
             let size = this.currentPerso.emplacements.find(s => s.nom === selectedSlot.slot).items.length
-            console.log(size)
+            console.log("limit : "+size)
             if (size >= selectedSlot.limit) {
                 return alert("Vous ne pouvez pas mettre d'avantage d'item dans cet emplacement")
             }
             this.$store.commit('equipItem', {slot: selectedSlot, item: this.curItem, size: size})
             this.curItem = null;
+            if (this.curSlot) {
+                this.setPossibleItems({slot: this.curSlot, items: this.currentPerso.itemsAchetes})
+            }
             this.$router.push({name: 'slot', params: {name: selectedSlot.slot}}).catch(() => {})
         },
         unset(event) {
             this.$store.commit('unsetItem', {slotName: event.slotName, item: event.item})
+            if (this.curSlot) {
+                this.setPossibleItems({slot: this.curSlot, items: this.currentPerso.itemsAchetes})
+            }
         },
+        ...mapMutations(['setPossibleItems']),
         lvl2(slot) {
-            console.log(slot.nom)
-            this.display = true
+            this.curSlot = slot
+            this.setPossibleItems({slot: slot, items: this.currentPerso.itemsAchetes})
             this.$router.push({name: 'slot', params: {name: slot.nom}}).catch(() => 
-            {this.$router.push({name: 'persos'})})
+            {
+                this.curSlot = null;
+                this.setPossibleItems({slot: null, items: []});
+                this.$router.push({name: 'persos'})
+            })
+        },
+        equipSelectedItem(selectedSlot, item) {
+            let size = this.currentPerso.emplacements.find(s => s.nom === selectedSlot.nom).items.length
+            this.$store.commit('equipItem', {slot2: selectedSlot, item: item, size: size})
+            this.setPossibleItems({slot: selectedSlot, items: this.currentPerso.itemsAchetes})
+            this.curItem = null;
+            this.$router.push({name: 'slot', params: {name: selectedSlot.nom}}).catch(() => {})
         }
     }
 }

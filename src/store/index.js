@@ -16,6 +16,7 @@ export default new Vuex.Store({
     currentShop: null,
     possibleSlots: [],
     currentTown: null,
+    possibleItems: []
   }),
   getters: {
     getOrCurrentPerso (state) {
@@ -66,7 +67,9 @@ export default new Vuex.Store({
       state.possibleSlots = itemLimits.filter(i => i.types.includes(item.type))
     },
     equipItem(state, data) {
-      console.log(data.slot)
+      if (data.slot2 !== undefined) {
+        data.slot = itemLimits.filter(i => i.slot === data.slot2.nom)[0];
+      }
       if (data.size >= data.slot.limit) {
         return;
       }
@@ -79,13 +82,21 @@ export default new Vuex.Store({
       state.currentPerso.itemsAchetes = state.currentPerso.itemsAchetes.filter(i => i._id !== data.item._id);
     },
     unsetItem(state, data) {
-      console.log(data.index)
       state.currentPerso.emplacements.filter(s => s.nom === data.slotName)[0].items = state.currentPerso.emplacements.filter(s => s.nom === data.slotName)[0].items.filter(i => i._id !== data.item._id);
       state.currentPerso.itemsAchetes.push(data.item);
     },
     setCurrentTown (state, town) {
       state.currentShop = null;
       state.currentTown = town;
+    },
+    setPossibleItems (state, data) {
+      // data.slot, data.items
+      if (data.slot === null) {
+        state.possibleItems = [];
+        return;
+      }
+      let availableTypes = itemLimits.filter(i => i.slot === data.slot.nom)[0]?.types;
+      state.possibleItems = data.items.filter(i => availableTypes.includes(i.type));
     }
   },
   // actions = fonctions asynchrone pour mettre à jour le state, en faisant appel aux mutations, via la fonction commit()
