@@ -40,8 +40,8 @@
               <template #item="{item}">
                   {{item.nom}} : {{item.time = Math.floor(Math.random() * (10000 - 2000 + 1)) + 2000}} ms
               </template>
-              <template #item-button="{item}">
-                  <v-btn :color="item.color" x-small @click="orderOneItem(item)">Order</v-btn>
+              <template #item-button="{item, indexRow}">
+                  <v-btn :color="item.color" x-small @click="orderOneItem(indexRow)">Order</v-btn>
               </template>
           </CheckedList>
         </td>
@@ -110,12 +110,27 @@ export default {
         }
     },
     buySelectedItems() {
-      console.log('achat des items d\'indice '+this.idSelectedItemsStock)
+      if (this.idSelectedItemsStock.length <= 0) {
+        return alert("Vou n'avez pas sélectionner d'item")
+      }
+      let maxprize = 0;
+      this.idSelectedItemsStock.forEach(id => {
+        maxprize += this.shop.itemStock[id].prix
+      })
+      if (this.getOrCurrentPerso() < maxprize) {
+        return alert("Vous n'avez pas assez d'or pour acheté tout ces items")
+      }
+      for(let i=0; i<this.idSelectedItemsStock.length; i++) {
+        if (this.getOrCurrentPerso() === 0) {
+            alert('Vous devez sélectionner un personnage avant de pouvoir acheter des objets.')
+        } else 
+            this.sell(this.shop.itemStock[this.idSelectedItemsStock[i]])
+      }
+      this.idSelectedItemsStock.splice(0)
     },
     orderOneItem(index) {
       console.log('commande de '+this.shop.itemCommande[index].nom)
-      let time = Math.floor(Math.random() * (10000 - 2000 + 1)) + 2000;
-      if (confirm('Commande de '+this.shop.itemCommande[index].nom+'. Temps estimé : '+time+' ms. Continuer ?')) {
+      if (confirm('Commande de '+this.shop.itemCommande[index].nom+'. Temps estimé : '+this.shop.itemCommande[index].time+' ms. Continuer ?')) {
         this.$store.dispatch('order', {item: this.shop.itemCommande[index], time: this.shop.itemCommande[index].time})
       }
     }
