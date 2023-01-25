@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-btn class="navbtn" rounded v-for="(but, index) in titles" :key="index" :color="but.color" @click="go(but.path, index)">
-      {{but.text}}
-    </v-btn>
+    <span class="navbtn" v-for="(link, index) in titles" :key="index" @click="goTo(index)">
+      <slot name="link-to" :link="link">{{link.text}}</slot>
+    </span>
   </div>
 </template>
 
@@ -14,7 +14,11 @@ export default {
     go(path, index) {
       this.$emit('menu-clicked', index)
       this.$router.push(path).catch(() => {})
-    }
+    },
+      goTo(index) {
+          this.$emit('menu-clicked', index)
+          this.$router.push(this.titles[index].path).catch(() => {})
+      }
   }
 }
 </script>

@@ -5,7 +5,11 @@
       color="dark"
       dark
     >
-      <NavBar :titles="titles" @menu-clicked="goTo"></NavBar>
+      <NavBar :titles="titles" @menu-clicked="goTo">
+        <template #link-to="{link}">
+          <v-btn :color="link.color" rounded text>{{link.text}}</v-btn>
+        </template>
+      </NavBar>
     </v-app-bar>
 
     <v-main>
