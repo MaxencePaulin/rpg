@@ -10,16 +10,17 @@
                     </tr>
                     <tr>
                         <td>
+                            <slot name="skills"
+                                  :niveau="currentPerso.niveau"
+                                  :vie="currentPerso.attributs.vie"
+                                  :vitalite="currentPerso.attributs.vitalite"
+                            ></slot>
                             <ul>
-                                <li>niveau : {{ currentPerso.niveau}}</li>
-                                <li>vie : {{ currentPerso.attributs.vie}}</li>
-                                <li>vitalité : {{ currentPerso.attributs.vitalite}}</li>
                                 <li>force : {{ currentPerso.attributs.force}}</li>
                                 <li>armure : {{ currentPerso.attributs.protection}}</li>
                             </ul>
                         </td>
                         <td>
-
                             <ul>
                                 <li v-for="(slot, index) in slots" :key="index">
                                     <v-btn rounded color="primary" class="mt-1 mb-1" small @click="lvl2(slot)">
@@ -30,7 +31,9 @@
                         </td>
                     </tr>
                     <tr>
-                        <td> or : {{currentPerso.or}}</td>
+                        <td>
+                            <slot name="gold" :or="currentPerso.or"></slot>
+                        </td>
                         <td>
                             <CheckedList
                                 :data="currentPerso.itemsAchetes"
