@@ -11,7 +11,7 @@
       <tr>
         <td>
           <CheckedList
-              :data="itemsStock"
+              :data="shop.itemStock"
               :fields="['text']"
               :checked="checkedItemsStock"
               item-check
@@ -21,15 +21,30 @@
               @item-button-clicked="buyOneItem"
               @list-button-clicked="buySelectedItems"
           >
+              <template #item="{item}">
+                  {{item.nom}} : {{item.prix}} po
+              </template>
+              <template #item-button="{item, indexRow}">
+                  <v-btn :color="indexRow % 2 === 0 ? 'red' : 'blue'" x-small @click="buyOneItem(item)">Buy</v-btn>
+              </template>
+              <template #list-button>
+                  <v-btn color="green" x-small @click="buySelectedItems">Buy selected</v-btn>
+              </template>
           </CheckedList>
         </td>
         <td>
           <CheckedList
-              :data="itemsCommande"
+              :data="shop.itemCommande"
               :fields="['text']"
               :item-button="{show: true, text: 'commander'}"
               @item-button-clicked="orderOneItem"
           >
+              <template #item="{item}">
+                  {{item.nom}} : {{item.time = Math.floor(Math.random() * (10000 - 2000 + 1)) + 2000}} ms
+              </template>
+              <template #item-button="{item}">
+                  <v-btn :color="['red', 'green', 'blue', 'orange', 'yellow', 'magenta', 'ligthgray', 'lime', 'purple', 'lightblue'][itemCats.indexOf(item.type)]" x-small @click="orderOneItem(item)">Order</v-btn>
+              </template>
           </CheckedList>
         </td>
       </tr>
@@ -40,15 +55,17 @@
 <script>
 import CheckedList from "@/components/CheckedList";
 import {mapGetters, mapMutations} from 'vuex'
+import { itemCats } from "@/services/data.service";
 
 export default {
   name: "ShopDetails",
   components: {CheckedList},
   props: {
-    shop: Object
+    shop: Object,
   },
   data: () => ({
-    idSelectedItemsStock: []
+    idSelectedItemsStock: [],
+      itemCats:itemCats,
   }),
   computed: {
     checkedItemsStock() {
@@ -63,12 +80,12 @@ export default {
     // il n'est donc pas possible d'utiliser directement les champs d'un item dans CheckedList,
     // puisque les : et le po sont des données statiques externes aux tableaux d'items de la boutique.
     // C'est pourpqui les 2 fonctions suivantes recalculent un noveau tableau avec le texte qui va bien.
-    itemsStock() {
-      return this.shop.itemStock.map(e => ({text: e.nom+' : '+e.prix+' po'}) )
-    },
-    itemsCommande() {
-      return this.shop.itemCommande.map(e => ({text: e.nom+' : '+e.prix+' po'}) )
-    }
+    // itemsStock() {
+    //   return this.shop.itemStock.map(e => ({text: e.nom+' : '+e.prix+' po'}) )
+    // },
+    // itemsCommande() {
+    //   return this.shop.itemCommande.map(e => ({text: e.nom+' : '+e.prix+' po'}) )
+    // },
   },
   methods: {
     toggleItemStock(index) {
@@ -103,7 +120,7 @@ export default {
       console.log('commande de '+this.shop.itemCommande[index].nom)
       let time = Math.floor(Math.random() * (10000 - 2000 + 1)) + 2000;
       if (confirm('Commande de '+this.shop.itemCommande[index].nom+'. Temps estimé : '+time+' ms. Continuer ?')) {
-        this.$store.dispatch('order', {item: this.shop.itemCommande[index], time: time})  
+        this.$store.dispatch('order', {item: this.shop.itemCommande[index], time: this.shop.itemCommande[index].time})
       }
     }
   },
