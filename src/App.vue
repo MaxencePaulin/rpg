@@ -12,7 +12,7 @@
       </NavBar>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="mainPage">
       <router-view name="central"/>
     </v-main>
   </v-app>
@@ -44,3 +44,12 @@ export default {
   }
 };
 </script>
+
+<style>
+.mainPage{
+  background-image: url('@/assets/background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+</style>

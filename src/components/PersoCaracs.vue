@@ -99,7 +99,7 @@
             </div>
         </div>
         <div style="display:flex">
-            <router-view name="slot" @unset-event="unset"></router-view>
+            <router-view name="slot" :change="change" @unset-event="unset"></router-view>
         </div>
     </div>
 </template>
@@ -111,6 +111,9 @@ export default {
     name: "PersoCaracs",
     components: {
         CheckedList: () => import('./CheckedList.vue'),
+    },
+    props: {
+        change: Object // le personnage à observer pour remettre à null les valeurs de curItem et curSlot
     },
     data: () => ({
         idSelectedBoughtItems: [], // ce tableau ne contient que les ids des items achetés sélectionnés.
@@ -227,6 +230,15 @@ export default {
             this.setPossibleItems({slot: selectedSlot, items: this.currentPerso.itemsAchetes})
             this.curItem = null;
             this.$router.push({name: 'slot', params: {name: selectedSlot.nom}}).catch(() => {})
+        }
+    },
+    watch: {
+        change() {
+            this.curSlot = null;
+            this.curItem = null;
+            this.setPossibleItems({slot: null, items: []});
+            this.$store.commit('setPossibleSlot', [])
+            console.log('Changement observé, persocaracs réinitialisé')
         }
     }
 }

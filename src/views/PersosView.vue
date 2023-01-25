@@ -11,7 +11,7 @@
       </div>
       <!-- partie droite -->
       <div v-if="currentPerso != null">
-          <PersoCaracs>
+          <PersoCaracs :change="selected">
               <template #skills="{niveau, vie, vitalite}">
                   <div class="mx-2">
                       <v-icon v-for="i in niveau" :key="i" color="orange">mdi-star</v-icon>
@@ -28,6 +28,7 @@
               </template>
               <template #gold="{or}">
                     <div class="mx-2">
+                        <!-- Vous devez installer @iconify/vue2 pour utiliser les icones (vous avez juste à faire npm i) -->
                         <Icon icon="clarity:coin-bag-solid" color="orange" width="30" height="30"/> :
                         {{Romain(or)}} po
                     </div>
@@ -58,6 +59,7 @@ export default {
     ...mapMutations(['setCurrentPerso']),
     setcurrentPerso (perso) {
         if (perso !== null) {
+            this.$router.push({name: 'persos' }).catch(() => {})
           return this.setCurrentPerso(perso)
         }
         return null
