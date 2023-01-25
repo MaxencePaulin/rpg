@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div style="text-align: left; width: 100%">
+        <div style="text-align: left; width: 150%">
             <h1>{{currentPerso.nom}}</h1>
             <div style="display: flex">
                 <table>
@@ -34,19 +34,29 @@
                         <td>
                             <CheckedList
                                 :data="currentPerso.itemsAchetes"
-                                :fields="['nom','type']"
                                 :checked="checkedBoughtItems"
                                 item-check
-                                :item-button="{show: true, text: 'price'}"
-                                :list-button="{show: true, text: 'Infos'}"
-                                :sell-button="{show: true, text: 'Sell'}"
-                                :equip-button="{show: true, text: 'Set'}"
+                                :item-button="true"
+                                :list-button="true"
+                                :sell-button="true"
+                                :equip-button="true"
                                 @checked-changed="toggleItem"
-                                @item-button-clicked="showItemPrice"
-                                @list-button-clicked="showItemsInfo"
-                                @sell-button-clicked="sellItem"
-                                @equip-button-clicked="equipParams"
                             >
+                                <template #item="{item}">
+                                    {{ item.nom }} : {{ item.type }}
+                                </template>
+                                <template #item-button="{indexRow}">
+                                    <v-btn color="grey" small @click="showItemPrice(indexRow)">Price</v-btn>
+                                </template>
+                                <template #list-button>
+                                    <v-btn color="green" small class="ml-2 mb-2" @click="showItemsInfo">Infos</v-btn>
+                                </template>
+                                <template #equip-button="{indexRow}">
+                                    <v-btn color="amber" class="ml-5" small @click="equipParams(indexRow)">Set</v-btn>
+                                </template>
+                                <template #sell-button="{indexRow}">
+                                    <v-btn color="red" class="ml-5 mr-2" small @click="sellItem(indexRow)">Sell</v-btn>
+                                </template>
                             </CheckedList>
                         </td>
                     </tr>
@@ -187,6 +197,8 @@ export default {
             if (this.curSlot) {
                 this.setPossibleItems({slot: this.curSlot, items: this.currentPerso.itemsAchetes})
             }
+            this.curSlot = this.slots.find(s => s.nom === selectedSlot.slot)
+            this.setPossibleItems({slot: this.curSlot, items: this.currentPerso.itemsAchetes})
             this.$router.push({name: 'slot', params: {name: selectedSlot.slot}}).catch(() => {})
         },
         unset(event) {

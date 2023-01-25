@@ -11,8 +11,8 @@
 <!--        {{item[field]}}-->
 <!--      </span>-->
         <span v-if="itemButton"><slot name="item-button" :item="item" :indexRow="indexRow"></slot></span>
-      <v-btn v-if="equipButton && equipButton.show" class="ml-5" color="amber" @click="$emit('equip-button-clicked',indexRow)">{{equipButton.text}}</v-btn>
-      <v-btn v-if="sellButton && sellButton.show" class="ml-5 mr-2" color="red" @click="$emit('sell-button-clicked',indexRow)">{{sellButton.text}}</v-btn>
+      <span v-if="equipButton"><slot name="equip-button" :indexRow="indexRow"></slot></span>
+      <span v-if="sellButton"><slot name="sell-button" :indexRow="indexRow"></slot></span>
     </p>
     <span v-if="listButton"><slot name="list-button"></slot></span>
   </div>
@@ -30,8 +30,8 @@ export default {
     listButton: Object, // l'objet pour le bouton de liste*/
     itemButton: Boolean, // l'objet pour les boutons d'items
     listButton: Boolean, // l'objet pour le bouton de liste
-    sellButton: Object, // l'objet pour le bouton de vente
-    equipButton: Object, // l'objet pour le bouton d'équipement
+    sellButton: Boolean, // l'objet pour le bouton de vente
+    equipButton: Boolean, // l'objet pour le bouton d'équipement
   },
   data : () => {
     return {

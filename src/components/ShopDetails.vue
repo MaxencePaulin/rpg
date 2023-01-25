@@ -17,8 +17,7 @@
               :item-button="true"
               :list-button="true"
               @checked-changed="toggleItemStock"
-              @item-button-clicked="buyOneItem"
-              @list-button-clicked="buySelectedItems"
+
           >
               <template #item="{item}">
                   {{item.nom}} : {{item.prix}} po
