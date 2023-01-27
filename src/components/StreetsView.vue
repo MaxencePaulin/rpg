@@ -11,27 +11,6 @@
         <!-- partie droite -->
         <div v-if="selectedStreets" style="text-align: left; width: 70%">
             <router-view name="shops"></router-view>
-<!--            <table>-->
-<!--                <tr>-->
-<!--                    <th>rues: {{ this.selected.rues.length }}</th>-->
-<!--                    <th>boutiques</th>-->
-<!--                </tr>-->
-<!--                <tr v-for="(street, index) in this.selected.rues" :key="index">-->
-<!--                    <td>-->
-<!--                        {{ street.nom }} : {{ street.boutiques.length }} boutiques-->
-<!--                    </td>-->
-<!--                    <td>-->
-<!--                        <CheckedList-->
-<!--                            :data="street.boutiques"-->
-<!--                            :fields="['nom']"-->
-<!--                            :item-button="{show: true, text: 'select'}"-->
-<!--                            @item-button-clicked="shopSelected(index, $event)"-->
-<!--                        >-->
-<!--                        </CheckedList>-->
-<!--                    </td>-->
-<!--                </tr>-->
-<!--            </table>-->
-<!--            <ShopDetails :shop="currentShop"></ShopDetails>-->
         </div>
     </div>
 </template>
