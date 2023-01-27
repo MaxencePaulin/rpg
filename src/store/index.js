@@ -93,7 +93,8 @@ export default new Vuex.Store({
       state.currentPerso.itemsAchetes.splice(index, 1);
     },
     unsetItem(state, data) {
-      state.currentPerso.emplacements.filter(s => s.nom === data.slotName)[0].items = state.currentPerso.emplacements.filter(s => s.nom === data.slotName)[0].items.filter(i => i._id !== data.item._id);
+      let index = state.currentPerso.emplacements.filter(s => s.nom === data.slotName)[0].items.indexOf(data.item);
+      state.currentPerso.emplacements.filter(s => s.nom === data.slotName)[0].items.splice(index, 1);
       state.currentPerso.itemsAchetes.push(data.item);
     },
     setCurrentTown (state, town) {
