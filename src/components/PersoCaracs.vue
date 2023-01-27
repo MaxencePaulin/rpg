@@ -75,7 +75,9 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <span v-for="(slot, index) in possibleSlots" :key="index">{{slot.slot}} <v-btn color="amber" x-small @click="equipItem(slot)">Set</v-btn>, </span>
+                                    <span v-for="(slot, index) in possibleSlots" :key="index">
+                                        {{slot.slot}}
+                                        <v-btn color="amber" x-small @click="equipItem(slot)">Set</v-btn>, </span>
                                 </td>
                             </tr>
                         </table>
@@ -83,14 +85,17 @@
                     <div v-if="curSlot" class="mt-5">
                         <table>
                             <tr>
-                                <td colspan="2">Liste des items que vous pouvez équiper sur {{curSlot.slot}} : {{curSlot.label}}</td>
+                                <td colspan="2">Liste des items que vous pouvez équiper sur : {{curSlot.label}}</td>
                             </tr>
                             <tr>
                                 <td>Item : {{possibleItems.length}} item possible</td>
                             </tr>
                             <tr v-if="possibleItems.length > 0">
                                 <td>
-                                    <span v-for="(item, index) in possibleItems" :key="index">{{item.nom}} <v-btn color="amber" x-small @click="equipSelectedItem(curSlot, item)">Set</v-btn>, </span>
+                                    <span v-for="(item, index) in possibleItems" :key="index">
+                                      {{item.nom}}
+                                      <v-btn color="amber" x-small @click="equipSelectedItem(curSlot, item)">Set</v-btn>,
+                                    </span>
                                 </td>
                             </tr>
                         </table>
@@ -121,7 +126,7 @@ export default {
         curSlot: null,
     }),
     computed: {
-        ...mapState(['currentPerso', 'possibleSlots', 'possibleItems']),
+        ...mapState(['currentPerso', 'possibleSlots', 'possibleItems','curLimit']),
         checkedBoughtItems() {
             if (this.currentPerso === null) return []
             // construit un tableau contenant autant de cases qu'il y a d'items achetés
@@ -204,6 +209,7 @@ export default {
                 this.setPossibleItems({slot: this.curSlot, items: this.currentPerso.itemsAchetes})
             }
             this.curSlot = this.slots.find(s => s.nom === selectedSlot.slot)
+            this.setCurLimit(this.curSlot)
             this.setPossibleItems({slot: this.curSlot, items: this.currentPerso.itemsAchetes})
             this.$router.push({name: 'slot', params: {name: selectedSlot.slot}}).catch(() => {})
         },
@@ -213,19 +219,24 @@ export default {
                 this.setPossibleItems({slot: this.curSlot, items: this.currentPerso.itemsAchetes})
             }
         },
-        ...mapMutations(['setPossibleItems']),
+        ...mapMutations(['setPossibleItems', 'setCurLimit']),
         lvl2(slot) {
             this.curSlot = slot
+            this.setCurLimit(slot)
             this.setPossibleItems({slot: slot, items: this.currentPerso.itemsAchetes})
             this.$router.push({name: 'slot', params: {name: slot.nom}}).catch(() => 
             {
                 this.curSlot = null;
+                this.setCurLimit(null)
                 this.setPossibleItems({slot: null, items: []});
                 this.$router.push({name: 'persos'})
             })
         },
         equipSelectedItem(selectedSlot, item) {
             let size = this.currentPerso.emplacements.find(s => s.nom === selectedSlot.nom).items.length
+            if (size >= this.curLimit) {
+                return alert("Vous ne pouvez pas mettre d'avantage d'item dans cet emplacement")
+            }
             this.$store.commit('equipItem', {slot2: selectedSlot, item: item, size: size})
             this.setPossibleItems({slot: selectedSlot, items: this.currentPerso.itemsAchetes})
             this.curItem = null;
@@ -236,6 +247,7 @@ export default {
         change() {
             this.curSlot = null;
             this.curItem = null;
+            this.setCurLimit(null)
             this.setPossibleItems({slot: null, items: []});
             this.$store.commit('setPossibleSlot', [])
             console.log('Changement observé, persocaracs réinitialisé')

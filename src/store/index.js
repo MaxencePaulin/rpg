@@ -16,7 +16,8 @@ export default new Vuex.Store({
     currentShop: null,
     possibleSlots: [],
     currentTown: null,
-    possibleItems: []
+    possibleItems: [],
+    curLimit: null,
   }),
   getters: {
     getOrCurrentPerso (state) {
@@ -47,7 +48,8 @@ export default new Vuex.Store({
       }
       state.currentPerso.or -= item.prix;
       state.currentPerso.itemsAchetes.push(item);
-      state.currentShop.itemStock = state.currentShop.itemStock.filter(i => i._id !== item._id);
+      let index = state.currentShop.itemStock.indexOf(item);
+      state.currentShop.itemStock.splice(index, 1);
     },
     setCurrentShop(state, shop) {
       state.currentShop = shop;
@@ -66,7 +68,8 @@ export default new Vuex.Store({
       if (!state.currentShop) {
         return null;
       }
-      state.currentPerso.itemsAchetes = state.currentPerso.itemsAchetes.filter(i => i._id !== data.item._id);
+      let index = state.currentPerso.itemsAchetes.indexOf(data.item);
+      state.currentPerso.itemsAchetes.splice(index, 1);
       state.currentShop.itemStock.push(data.item);
       state.currentPerso.or += data.gold;
     },
@@ -86,7 +89,8 @@ export default new Vuex.Store({
         }
       });
       // retirer l'item des items achetés
-      state.currentPerso.itemsAchetes = state.currentPerso.itemsAchetes.filter(i => i._id !== data.item._id);
+      let index = state.currentPerso.itemsAchetes.indexOf(data.item);
+      state.currentPerso.itemsAchetes.splice(index, 1);
     },
     unsetItem(state, data) {
       state.currentPerso.emplacements.filter(s => s.nom === data.slotName)[0].items = state.currentPerso.emplacements.filter(s => s.nom === data.slotName)[0].items.filter(i => i._id !== data.item._id);
@@ -104,6 +108,14 @@ export default new Vuex.Store({
       }
       let availableTypes = itemLimits.filter(i => i.slot === data.slot.nom)[0]?.types;
       state.possibleItems = data.items.filter(i => availableTypes.includes(i.type));
+    },
+    setCurLimit (state, slot) {
+      if (slot === null) {
+        state.curLimit = null;
+        return;
+      }
+      let limit = itemLimits.find(i => i.slot === slot.nom).limit;
+      state.curLimit = limit;
     }
   },
   // actions = fonctions asynchrone pour mettre à jour le state, en faisant appel aux mutations, via la fonction commit()
